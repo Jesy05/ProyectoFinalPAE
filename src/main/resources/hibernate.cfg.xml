@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "https://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- URL, usuario y clave se leen de db.properties.example.example (ver HibernateUtil) -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <mapping class="ni.edu.uam.proyectofinalpae.model.Usuario"/>
+        <mapping class="ni.edu.uam.proyectofinalpae.model.Cultivo"/>
+    </session-factory>
+</hibernate-configuration>
