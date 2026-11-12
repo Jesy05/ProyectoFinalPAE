@@ -19,5 +19,8 @@
         <!-- Entidades de Jose -->
         <mapping class="ni.edu.uam.proyectofinalpae.model.Planta"/>
         <mapping class="ni.edu.uam.proyectofinalpae.model.Sensor"/>
+        <!-- Entidades de Jesy -->
+        <mapping class="ni.edu.uam.proyectofinalpae.model.Riego"/>
+        <mapping class="ni.edu.uam.proyectofinalpae.model.Alerta"/>
     </session-factory>
 </hibernate-configuration>
