@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            style="-fx-padding: 12;">
+
+    <top>
+        <VBox spacing="2"
+              style="-fx-padding: 0 0 10 0;">
+
+            <Label text="PlantBee"
+                   style="-fx-font-size: 24px;
+                          -fx-font-weight: bold;
+                          -fx-text-fill: #2e7d32;"/>
+
+            <Label text="Huertos verticales modulares para espacios urbanos"
+                   style="-fx-text-fill: #555;"/>
+
+        </VBox>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+
+            <Tab text="Usuarios" closable="false">
+                <fx:include source="usuario-view.fxml"/>
+            </Tab>
+
+            <Tab text="Colmenas" closable="false">
+                <fx:include source="colmena-view.fxml"/>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+</BorderPane>
