@@ -16,5 +16,8 @@
         <!-- Entidades de Fabiola -->
         <mapping class="ni.edu.uam.proyectofinalpae.model.Colmena"/>
         <mapping class="ni.edu.uam.proyectofinalpae.model.Modulo"/>
+        <!-- Entidades de Jose -->
+        <mapping class="ni.edu.uam.proyectofinalpae.model.Planta"/>
+        <mapping class="ni.edu.uam.proyectofinalpae.model.Sensor"/>
     </session-factory>
 </hibernate-configuration>

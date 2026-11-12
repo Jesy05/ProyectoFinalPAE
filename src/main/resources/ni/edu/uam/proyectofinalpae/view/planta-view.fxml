@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ni.edu.uam.proyectofinalpae.controller.PlantaController"
+      spacing="10" style="-fx-padding: 15;">
+    <Label text="Plantas y sensores de humedad" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <GridPane hgap="10" vgap="8">
+        <Label text="Apodo:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtApodo" promptText="Opcional, ej. Albahaca grande" prefWidth="220"
+                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <Label text="Cultivo:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cbCultivo" prefWidth="220" promptText="Seleccione"
+                  GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <Label text="Modulo:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cbModulo" prefWidth="220" promptText="Colmena - Nivel"
+                  GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Sembrada el:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+        <DatePicker fx:id="dpSiembra" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+        <Label text="Estado:" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+        <ComboBox fx:id="cbEstado" prefWidth="180" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+        <Label text="Codigo sensor:" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+        <TextField fx:id="txtCodigoSensor" promptText="SH-001" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+        <Label text="Humedad (%):" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+        <TextField fx:id="txtHumedad" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+    </GridPane>
+    <HBox spacing="8">
+        <Button text="Nuevo" onAction="#nuevo"/>
+        <Button text="Guardar" onAction="#guardar" defaultButton="true"/>
+        <Button text="Eliminar" onAction="#eliminar"/>
+        <Button text="Recargar" onAction="#recargar"/>
+        <Button text="Simular lectura de sensores" onAction="#simularSecado"/>
+    </HBox>
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="Ver plantas de la colmena:"/>
+        <ComboBox fx:id="cbFiltroColmena" prefWidth="220" promptText="Colmena" onAction="#filtrar"/>
+        <Button text="Ver todas" onAction="#recargar"/>
+    </HBox>
+    <TableView fx:id="tblPlantas" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colPlanta" text="Planta" prefWidth="160"/>
+            <TableColumn fx:id="colCultivo" text="Cultivo" prefWidth="120"/>
+            <TableColumn fx:id="colUbicacion" text="Ubicacion" prefWidth="190"/>
+            <TableColumn fx:id="colEstado" text="Estado" prefWidth="130"/>
+            <TableColumn fx:id="colHumedad" text="Humedad" prefWidth="160"/>
+            <TableColumn fx:id="colSiembra" text="Siembra" prefWidth="100"/>
+        </columns>
+    </TableView>
+</VBox>
