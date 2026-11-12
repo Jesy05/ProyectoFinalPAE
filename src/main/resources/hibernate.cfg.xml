@@ -4,13 +4,17 @@
         "https://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <!-- URL, usuario y clave se leen de db.properties.example.example (ver HibernateUtil) -->
+        <!-- URL, usuario y clave se leen de db.properties (ver HibernateUtil) -->
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
 
+        <!-- Entidades de Gabriela -->
         <mapping class="ni.edu.uam.proyectofinalpae.model.Usuario"/>
         <mapping class="ni.edu.uam.proyectofinalpae.model.Cultivo"/>
+        <!-- Entidades de Fabiola -->
+        <mapping class="ni.edu.uam.proyectofinalpae.model.Colmena"/>
+        <mapping class="ni.edu.uam.proyectofinalpae.model.Modulo"/>
     </session-factory>
 </hibernate-configuration>
