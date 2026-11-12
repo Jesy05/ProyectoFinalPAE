@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+### Credenciales locales (NO subir) ###
+src/main/resources/db.properties
+*.log
