@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ni.edu.uam.proyectofinalpae.controller.RiegoController"
+      spacing="10" style="-fx-padding: 15;">
+    <Label text="Historial de riego" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <ComboBox fx:id="cbPlanta" prefWidth="260" promptText="Planta"/>
+        <TextField fx:id="txtCantidad" prefWidth="80" promptText="ml"/>
+        <Label text="ml"/>
+        <ComboBox fx:id="cbOrigen" prefWidth="220"/>
+        <ComboBox fx:id="cbModo" prefWidth="120"/>
+        <Button text="Registrar riego" onAction="#registrarRiego" defaultButton="true"/>
+        <Button text="Eliminar riego" onAction="#eliminarRiego"/>
+        <Button text="Recargar" onAction="#recargar"/>
+    </HBox>
+    <Label fx:id="lblAgua" style="-fx-text-fill: #1565c0;"/>
+    <TableView fx:id="tblRiegos" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="130"/>
+            <TableColumn fx:id="colPlanta" text="Planta" prefWidth="280"/>
+            <TableColumn fx:id="colCantidad" text="ml" prefWidth="70"/>
+            <TableColumn fx:id="colOrigen" text="Origen del agua" prefWidth="210"/>
+            <TableColumn fx:id="colModo" text="Modo" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <Separator/>
+    <Label text="Alertas pendientes" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <HBox spacing="8">
+        <Button text="Revisar sensores" onAction="#revisarSensores"/>
+        <Button text="Marcar como atendida" onAction="#marcarAtendida"/>
+        <Button text="Eliminar alerta" onAction="#eliminarAlerta"/>
+    </HBox>
+    <TableView fx:id="tblAlertas" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colAFecha" text="Fecha" prefWidth="130"/>
+            <TableColumn fx:id="colAPlanta" text="Planta" prefWidth="250"/>
+            <TableColumn fx:id="colATipo" text="Tipo" prefWidth="110"/>
+            <TableColumn fx:id="colAMensaje" text="Mensaje" prefWidth="420"/>
+        </columns>
+    </TableView>
+</VBox>

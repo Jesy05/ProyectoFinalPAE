@@ -19,6 +19,9 @@
             <Tab text="Plantas">
                 <fx:include source="planta-view.fxml"/>
             </Tab>
+            <Tab text="Riegos y alertas">
+                <fx:include source="riego-view.fxml"/>
+            </Tab>
         </TabPane>
     </center>
 </BorderPane>
