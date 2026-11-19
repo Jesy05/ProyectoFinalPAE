@@ -1,0 +1,148 @@
+
+/* =========================================
+   PLANTBEE - RIEGOS Y ALERTAS
+   ========================================= */
+
+.riegos-page {
+    -fx-background-color: #ECF5E2;
+    -fx-padding: 20;
+    -fx-spacing: 12;
+    -fx-font-family: "System";
+}
+
+/* TITULOS */
+
+.riegos-page .page-title {
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+.riegos-page .section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* CAMPOS */
+
+.riegos-page .text-field,
+.riegos-page .combo-box {
+    -fx-background-color: #FFFDF1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #D7E3A4;
+    -fx-pref-height: 42;
+}
+
+/* BOTONES */
+
+.riegos-page .button {
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 10 18;
+    -fx-pref-height: 42;
+    -fx-cursor: hand;
+}
+
+/* REGISTRAR */
+
+.riegos-page .button.btn-registrar {
+    -fx-background-color: #006850;
+    -fx-text-fill: white;
+}
+
+.riegos-page .button.btn-registrar:hover {
+    -fx-background-color: #004F2E;
+}
+
+/* ELIMINAR */
+
+.riegos-page .button.btn-eliminar {
+    -fx-background-color: #F3DED7;
+    -fx-text-fill: #8B3528;
+}
+
+.riegos-page .button.btn-eliminar:hover {
+    -fx-background-color: #EBC4B8;
+}
+
+/* RECARGAR */
+
+.riegos-page .button.btn-recargar {
+    -fx-background-color: #B7D17A;
+    -fx-text-fill: #254E06;
+}
+
+.riegos-page .button.btn-recargar:hover {
+    -fx-background-color: #9DBD60;
+}
+
+/* REVISAR SENSORES */
+
+.riegos-page .button.btn-revisar {
+    -fx-background-color: #254E06;
+    -fx-text-fill: white;
+}
+
+.riegos-page .button.btn-revisar:hover {
+    -fx-background-color: #006850;
+}
+
+/* MARCAR ATENDIDA */
+
+.riegos-page .button.btn-atendida {
+    -fx-background-color: #EAD465;
+    -fx-text-fill: #254E06;
+}
+
+.riegos-page .button.btn-atendida:hover {
+    -fx-background-color: #D4C04D;
+}
+
+/* TABLAS */
+
+.riegos-page .table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #EAD465;
+}
+
+.riegos-page .table-view .column-header,
+.riegos-page .table-view .column-header-background {
+    -fx-background-color: #254E06;
+}
+
+.riegos-page .table-view .column-header .label {
+    -fx-text-fill: #F5EAB9;
+    -fx-font-weight: bold;
+}
+
+.riegos-page .table-row-cell:even {
+    -fx-background-color: #FFFDF1;
+}
+
+.riegos-page .table-row-cell:odd {
+    -fx-background-color: #ECF5E2;
+}
+
+.riegos-page .table-row-cell:filled:selected {
+    -fx-background-color: #B7D17A;
+}
+
+/* SEPARADOR */
+
+.riegos-page .separator .line {
+    -fx-border-color: #D7E3A4;
+}
+
+/* INFORMACION DEL AGUA */
+
+.riegos-page .agua-info {
+    -fx-text-fill: #006850;
+    -fx-font-weight: bold;
+}

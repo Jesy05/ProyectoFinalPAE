@@ -1,0 +1,64 @@
+
+/* ========================================
+   FORMULARIOS Y TARJETAS
+   ======================================== */
+
+.plantbee-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #EAD465;
+    -fx-border-width: 1;
+    -fx-padding: 20;
+}
+
+/* CAMPOS */
+
+.text-field,
+.combo-box,
+.date-picker,
+.spinner {
+    -fx-background-color: #FFFDF1;
+    -fx-border-color: #D7E3A4;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-pref-height: 40;
+    -fx-font-size: 13px;
+}
+
+.text-field {
+    -fx-padding: 8 12;
+}
+
+.text-field:focused,
+.combo-box:focused,
+.date-picker:focused,
+.spinner:focused {
+    -fx-border-color: #80A32F;
+    -fx-border-width: 2;
+}
+
+/* COMBOBOX */
+
+.combo-box .list-cell {
+    -fx-text-fill: #254E06;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #D7E3A4;
+}
+
+.combo-box-popup .list-cell:hover,
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #F5EAB9;
+    -fx-text-fill: #254E06;
+}
+
+/* DATEPICKER Y SPINNER */
+
+.date-picker .arrow-button,
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: #D7E3A4;
+}

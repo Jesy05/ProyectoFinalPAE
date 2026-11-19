@@ -1,49 +1,172 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ni.edu.uam.proyectofinalpae.controller.ColmenaController"
-      spacing="10" style="-fx-padding: 15;">
-    <Label text="Colmenas PlantBee" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-    <GridPane hgap="10" vgap="8">
-        <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="txtNombre" promptText="Ej. Colmena del balcon" prefWidth="240"
-                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-        <Label text="Ubicacion:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="txtUbicacion" promptText="Balcon, patio, cocina..."
-                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-        <Label text="Instalado el:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <DatePicker fx:id="dpFecha" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-        <Label text="Dueno:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-        <ComboBox fx:id="cbUsuario" prefWidth="220" promptText="Seleccione"
-                  GridPane.rowIndex="0" GridPane.columnIndex="3"/>
-        <Label text="Modulos:" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-        <Spinner fx:id="spNiveles" min="1" max="10" initialValue="3"
-                 GridPane.rowIndex="1" GridPane.columnIndex="3"/>
-        <Label text="Macetas por nivel:" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-        <Spinner fx:id="spCapacidad" min="1" max="12" initialValue="4"
-                 GridPane.rowIndex="2" GridPane.columnIndex="3"/>
-    </GridPane>
-    <HBox spacing="8">
-        <Button text="Nuevo" onAction="#nuevo"/>
-        <Button text="Guardar" onAction="#guardar" defaultButton="true"/>
-        <Button text="Eliminar" onAction="#eliminar"/>
-        <Button text="Recargar" onAction="#recargar"/>
-    </HBox>
-    <HBox spacing="8" alignment="CENTER_LEFT">
-        <Label text="Ver colmenas de:"/>
-        <ComboBox fx:id="cbFiltroUsuario" prefWidth="220" promptText="Usuario" onAction="#filtrar"/>
-        <Button text="Ver todos" onAction="#recargar"/>
-    </HBox>
-    <TableView fx:id="tblColmenas" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
-            <TableColumn fx:id="colNombre" text="Colmena" prefWidth="200"/>
-            <TableColumn fx:id="colUbicacion" text="Ubicacion" prefWidth="160"/>
-            <TableColumn fx:id="colUsuario" text="Dueno" prefWidth="180"/>
-            <TableColumn fx:id="colNiveles" text="Modulos" prefWidth="80"/>
-            <TableColumn fx:id="colFecha" text="Instalado" prefWidth="120"/>
-        </columns>
-    </TableView>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ni.edu.uam.proyectofinalpae.controller.ColmenaController"
+      styleClass="colmena-page"
+      spacing="18">
+
+    <VBox spacing="5">
+        <Label text="Gestión de Colmenas"
+               styleClass="page-title"/>
+
+        <Label text="Administra tus huertos verticales y sus módulos hexagonales."
+               styleClass="page-subtitle"/>
+    </VBox>
+
+    <VBox spacing="15" styleClass="plantbee-card">
+
+        <Label text="Información de la colmena"
+               styleClass="section-title"/>
+
+        <GridPane hgap="18" vgap="12">
+
+            <columnConstraints>
+                <ColumnConstraints minWidth="110"/>
+                <ColumnConstraints minWidth="200" hgrow="ALWAYS"/>
+                <ColumnConstraints minWidth="125"/>
+                <ColumnConstraints minWidth="200" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label text="Nombre:"
+                   styleClass="field-label"
+                   GridPane.rowIndex="0"
+                   GridPane.columnIndex="0"/>
+
+            <TextField fx:id="txtNombre"
+                       promptText="Ej. Colmena del balcón"
+                       maxWidth="Infinity"
+                       GridPane.rowIndex="0"
+                       GridPane.columnIndex="1"/>
+
+            <Label text="Dueño:"
+                   styleClass="field-label"
+                   GridPane.rowIndex="0"
+                   GridPane.columnIndex="2"/>
+
+            <ComboBox fx:id="cbUsuario"
+                      promptText="Seleccione un usuario"
+                      maxWidth="Infinity"
+                      GridPane.rowIndex="0"
+                      GridPane.columnIndex="3"/>
+
+            <Label text="Ubicación:"
+                   styleClass="field-label"
+                   GridPane.rowIndex="1"
+                   GridPane.columnIndex="0"/>
+
+            <TextField fx:id="txtUbicacion"
+                       promptText="Balcón, patio, cocina..."
+                       maxWidth="Infinity"
+                       GridPane.rowIndex="1"
+                       GridPane.columnIndex="1"/>
+
+            <Label text="Módulos:"
+                   styleClass="field-label"
+                   GridPane.rowIndex="1"
+                   GridPane.columnIndex="2"/>
+
+            <Spinner fx:id="spNiveles"
+                     min="1" max="10" initialValue="3"
+                     maxWidth="Infinity"
+                     GridPane.rowIndex="1"
+                     GridPane.columnIndex="3"/>
+
+            <Label text="Instalado el:"
+                   styleClass="field-label"
+                   GridPane.rowIndex="2"
+                   GridPane.columnIndex="0"/>
+
+            <DatePicker fx:id="dpFecha"
+                        maxWidth="Infinity"
+                        GridPane.rowIndex="2"
+                        GridPane.columnIndex="1"/>
+
+            <Label text="Macetas por nivel:"
+                   styleClass="field-label"
+                   GridPane.rowIndex="2"
+                   GridPane.columnIndex="2"/>
+
+            <Spinner fx:id="spCapacidad"
+                     min="1" max="12" initialValue="4"
+                     maxWidth="Infinity"
+                     GridPane.rowIndex="2"
+                     GridPane.columnIndex="3"/>
+
+        </GridPane>
+
+        <HBox spacing="10">
+
+            <Button text="Nuevo"
+                    onAction="#nuevo"
+                    styleClass="btn-nuevo"/>
+
+            <Button text="Guardar"
+                    onAction="#guardar"
+                    defaultButton="true"
+                    styleClass="btn-guardar"/>
+
+            <Button text="Eliminar"
+                    onAction="#eliminar"
+                    styleClass="btn-eliminar"/>
+
+            <Button text="Recargar"
+                    onAction="#recargar"
+                    styleClass="btn-recargar"/>
+
+        </HBox>
+    </VBox>
+
+    <VBox spacing="14"
+          styleClass="plantbee-card"
+          VBox.vgrow="ALWAYS">
+
+        <Label text="Colmenas registradas"
+               styleClass="section-title"/>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+
+            <Label text="Filtrar por usuario:"
+                   styleClass="field-label"/>
+
+            <ComboBox fx:id="cbFiltroUsuario"
+                      prefWidth="220"
+                      promptText="Seleccione un usuario"
+                      onAction="#filtrar"/>
+
+            <Button text="Ver todos"
+                    onAction="#recargar"
+                    styleClass="btn-ver-todos"/>
+
+        </HBox>
+
+        <TableView fx:id="tblColmenas"
+                   prefHeight="260"
+                   VBox.vgrow="ALWAYS">
+
+            <columns>
+                <TableColumn fx:id="colId"
+                             text="ID" prefWidth="60"/>
+
+                <TableColumn fx:id="colNombre"
+                             text="Colmena" prefWidth="200"/>
+
+                <TableColumn fx:id="colUbicacion"
+                             text="Ubicación" prefWidth="160"/>
+
+                <TableColumn fx:id="colUsuario"
+                             text="Dueño" prefWidth="180"/>
+
+                <TableColumn fx:id="colNiveles"
+                             text="Módulos" prefWidth="80"/>
+
+                <TableColumn fx:id="colFecha"
+                             text="Instalado" prefWidth="120"/>
+            </columns>
+
+        </TableView>
+    </VBox>
+
 </VBox>

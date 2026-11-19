@@ -1,34 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="ni.edu.uam.proyectofinalpae.controller.UsuarioController"
-      spacing="10" style="-fx-padding: 15;">
-    <Label text="Usuarios" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-    <GridPane hgap="10" vgap="8">
-        <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="txtNombre" promptText="Ej. Ana Lopez" prefWidth="260"
-                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-        <Label text="Correo:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="txtCorreo" promptText="ana@correo.com"
-                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-        <Label text="Telefono:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="txtTelefono" promptText="8 digitos (opcional)"
-                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+      styleClass="usuarios-page"
+      spacing="14">
+
+    <Label
+            text="Gestión de usuarios"
+            styleClass="usuarios-title, page-title"/>
+
+
+    <GridPane hgap="12" vgap="10">
+
+        <Label
+                text="Nombre:"
+                GridPane.rowIndex="0"
+                GridPane.columnIndex="0"/>
+
+        <TextField
+                fx:id="txtNombre"
+                promptText="Ej. Ana López"
+                prefWidth="300"
+                GridPane.rowIndex="0"
+                GridPane.columnIndex="1"/>
+
+        <Label
+                text="Correo:"
+                GridPane.rowIndex="1"
+                GridPane.columnIndex="0"/>
+
+        <TextField
+                fx:id="txtCorreo"
+                promptText="ana@correo.com"
+                GridPane.rowIndex="1"
+                GridPane.columnIndex="1"/>
+
+        <Label
+                text="Teléfono:"
+                GridPane.rowIndex="2"
+                GridPane.columnIndex="0"/>
+
+        <TextField
+                fx:id="txtTelefono"
+                promptText="8 dígitos (opcional)"
+                GridPane.rowIndex="2"
+                GridPane.columnIndex="1"/>
+
     </GridPane>
-    <HBox spacing="8">
-        <Button text="Nuevo" onAction="#nuevo"/>
-        <Button text="Guardar" onAction="#guardar" defaultButton="true"/>
-        <Button text="Eliminar" onAction="#eliminar"/>
-        <Button text="Recargar" onAction="#recargar"/>
+
+    <!-- BOTONES -->
+
+    <HBox spacing="10">
+
+        <Button
+                text="Nuevo"
+                styleClass="btn-nuevo"
+                onAction="#nuevo"/>
+
+        <Button
+                text="Guardar"
+                styleClass="btn-guardar"
+                onAction="#guardar"
+                defaultButton="true"/>
+
+        <Button
+                text="Eliminar"
+                styleClass="btn-eliminar"
+                onAction="#eliminar"/>
+
+        <Button
+                text="Recargar"
+                styleClass="btn-recargar"
+                onAction="#recargar"/>
+
     </HBox>
-    <TableView fx:id="tblUsuarios" VBox.vgrow="ALWAYS">
+
+    <!-- TABLA DE USUARIOS -->
+
+    <TableView
+            fx:id="tblUsuarios"
+            VBox.vgrow="ALWAYS">
+
         <columns>
-            <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
-            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="220"/>
-            <TableColumn fx:id="colCorreo" text="Correo" prefWidth="240"/>
-            <TableColumn fx:id="colTelefono" text="Telefono" prefWidth="120"/>
-            <TableColumn fx:id="colFecha" text="Registro" prefWidth="120"/>
+
+            <TableColumn
+                    fx:id="colId"
+                    text="ID"
+                    prefWidth="70"/>
+
+            <TableColumn
+                    fx:id="colNombre"
+                    text="Nombre"
+                    prefWidth="220"/>
+
+            <TableColumn
+                    fx:id="colCorreo"
+                    text="Correo"
+                    prefWidth="260"/>
+
+            <TableColumn
+                    fx:id="colTelefono"
+                    text="Teléfono"
+                    prefWidth="140"/>
+
+            <TableColumn
+                    fx:id="colFecha"
+                    text="Registro"
+                    prefWidth="140"/>
+
         </columns>
+
     </TableView>
+
 </VBox>

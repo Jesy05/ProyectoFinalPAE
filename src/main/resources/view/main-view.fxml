@@ -1,27 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" style="-fx-padding: 12;">
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            styleClass="main-layout">
+
     <top>
-        <VBox spacing="2" style="-fx-padding: 0 0 10 0;">
-            <Label text="PlantBee" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
-            <Label text="Huertos verticales modulares para espacios urbanos" style="-fx-text-fill: #555;"/>
+        <VBox styleClass="main-top">
+            <HBox alignment="CENTER_LEFT"
+                  spacing="12"
+                  styleClass="main-header">
+
+                <VBox spacing="4">
+                    <Label text="PlantBee"
+                           styleClass="brand-title"/>
+
+                    <Label
+                            text="Huertos verticales modulares para espacios urbanos"
+                            styleClass="brand-subtitle"/>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Label text="Cultivando un futuro sostenible"
+                       styleClass="header-caption"/>
+            </HBox>
         </VBox>
     </top>
+
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE">
-            <Tab text="Usuarios">
-                <fx:include source="usuario-view.fxml"/>
-            </Tab>
-            <Tab text="Colmenas">
-                <fx:include source="colmena-view.fxml"/>
-            </Tab>
-            <Tab text="Plantas">
-                <fx:include source="planta-view.fxml"/>
-            </Tab>
-            <Tab text="Riegos y alertas">
-                <fx:include source="riego-view.fxml"/>
-            </Tab>
+        <TabPane fx:id="tabPrincipal"
+                 tabClosingPolicy="UNAVAILABLE"
+                 side="TOP"
+                 styleClass="plantbee-tabs">
+
+            <tabs>
+                <Tab text="Usuarios">
+                    <content>
+                        <fx:include source="usuario-view.fxml"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Colmenas">
+                    <content>
+                        <fx:include source="colmena-view.fxml"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Plantas">
+                    <content>
+                        <fx:include source="planta-view.fxml"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Riegos y alertas">
+                    <content>
+                        <fx:include source="riego-view.fxml"/>
+                    </content>
+                </Tab>
+            </tabs>
+
         </TabPane>
     </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT"
+              styleClass="main-footer">
+
+            <Label
+                    text="PlantBee | Gestión sostenible de huertos urbanos"/>
+        </HBox>
+    </bottom>
+
 </BorderPane>

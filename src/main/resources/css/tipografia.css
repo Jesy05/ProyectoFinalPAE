@@ -1,0 +1,92 @@
+
+/* ==========================================
+   PLANTBEE - TIPOGRAFIA UNIFICADA
+   ========================================== */
+
+/* 1. FUENTE Y TAMAÑO GENERAL */
+
+.main-layout {
+    -fx-font-family: "System";
+    -fx-font-size: 14px;
+}
+
+/* 2. LOGOTIPO PRINCIPAL */
+
+.main-layout .brand-title {
+    -fx-font-size: 44px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #F5EAB9;
+
+}
+
+/* 3. ETIQUETAS GENERALES DE LOS MODULOS */
+
+.main-layout .usuarios-page .label,
+.main-layout .plantas-page .label,
+.main-layout .colmena-page .label,
+.main-layout .riegos-page .label {
+    -fx-font-size: 14px;
+}
+
+/* 4. TITULOS PRINCIPALES */
+
+.main-layout .usuarios-page .usuarios-title,
+.main-layout .usuarios-page .page-title,
+.main-layout .plantas-page .page-title,
+.main-layout .colmena-page .page-title,
+.main-layout .riegos-page .page-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* 5. TITULOS DE SECCIONES */
+
+.main-layout .section-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* 6. SUBTITULOS DESCRIPTIVOS */
+
+.main-layout .page-subtitle,
+.main-layout .brand-subtitle {
+    -fx-font-size: 14px;
+}
+
+/* 7. CAMPOS DE FORMULARIOS */
+
+.main-layout .text-field,
+.main-layout .combo-box,
+.main-layout .date-picker,
+.main-layout .spinner {
+    -fx-font-size: 14px;
+}
+
+/* 8. BOTONES */
+
+.main-layout .button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* 9. DATOS DE LAS TABLAS */
+
+.main-layout .table-view {
+    -fx-font-size: 13px;
+}
+
+/* 10. ENCABEZADOS DE LAS TABLAS */
+
+.main-layout .table-view .column-header .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* 11. PESTAÑAS DE NAVEGACION */
+
+.tab-pane.plantbee-tabs .tab-header-area .tab .tab-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
