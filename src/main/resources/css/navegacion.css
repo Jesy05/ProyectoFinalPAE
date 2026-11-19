@@ -1,0 +1,242 @@
+
+/* =========================================
+   PLANTBEE - NAVEGACION PRINCIPAL
+   ========================================= */
+
+/* CONTENEDOR */
+
+.main-layout {
+    -fx-background-color: #ECF5E2;
+    -fx-font-family: "System";
+}
+
+/* ENCABEZADO */
+
+.main-top {
+    -fx-background-color: #004F2E;
+}
+
+.main-header {
+    -fx-background-color: #004F2E;
+    -fx-padding: 9 30;
+    -fx-alignment: CENTER_LEFT;
+    -fx-border-color: #EAD465;
+    -fx-border-width: 0 0 3 0;
+}
+
+.brand-title {
+    -fx-font-family: "Funky Bird";
+    -fx-font-size: 45px;
+    -fx-text-fill: #F5EAB9;
+}
+
+.brand-subtitle {
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+    -fx-text-fill: #CDE8D4;
+}
+
+.header-caption {
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+    -fx-text-fill: #EAD465;
+}
+
+/* TABPANE */
+
+.tab-pane.plantbee-tabs {
+    -fx-background-color: #ECF5E2;
+    -fx-tab-min-width: 155px;
+    -fx-tab-min-height: 46px;
+    -fx-open-tab-animation: NONE;
+    -fx-close-tab-animation: NONE;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* FONDO DE LA NAVEGACION */
+
+.tab-pane.plantbee-tabs > .tab-header-area {
+    -fx-padding: 0 16 0 16;
+}
+
+.tab-pane.plantbee-tabs .tab-header-background {
+    -fx-background-color: #FFFDF1;
+    -fx-border-color: #D7E3A4;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* PESTAÑAS NORMALES */
+
+.tab-pane.plantbee-tabs .tab-header-area .tab {
+    -fx-background-color: #B7D17A;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10 10 0 0;
+
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 3 0;
+
+    -fx-padding: 10 22;
+    -fx-cursor: hand;
+}
+
+/* TEXTO */
+
+.tab-pane.plantbee-tabs .tab-header-area .tab .tab-label {
+    -fx-font-family: "System";
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-alignment: CENTER;
+}
+
+/* HOVER */
+
+.tab-pane.plantbee-tabs .tab-header-area .tab:hover {
+    -fx-background-color: #9DBD60;
+}
+
+/* PESTAÑA ACTIVA */
+
+.tab-pane.plantbee-tabs .tab-header-area .tab:selected,
+.tab-pane.plantbee-tabs .tab-header-area .tab:selected:hover {
+    -fx-background-color: #006850;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10 10 0 0;
+
+    -fx-border-color: #EAD465;
+    -fx-border-width: 0 0 3 0;
+}
+
+/* TEXTO ACTIVO */
+
+.tab-pane.plantbee-tabs .tab-header-area
+.tab:selected .tab-label {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* ELIMINAR RESALTADO AZUL */
+
+.tab-pane.plantbee-tabs .tab .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+}
+
+.tab-pane.plantbee-tabs:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* CONTENIDO */
+
+.tab-pane.plantbee-tabs > .tab-content-area {
+    -fx-background-color: #ECF5E2;
+    -fx-padding: 0;
+}
+
+/* PIE DE PAGINA */
+
+.main-footer {
+    -fx-background-color: #004F2E;
+    -fx-padding: 12 25;
+    -fx-border-color: #EAD465;
+    -fx-border-width: 2 0 0 0;
+}
+
+.main-footer .label {
+    -fx-font-family: "System";
+    -fx-font-size: 12px;
+    -fx-text-fill: #F5EAB9;
+}
+
+/* TITULOS DE LOS MODULOS */
+
+.main-layout .page-title,
+.main-layout .section-title {
+    -fx-font-family: "System";
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+}
+
+
+/* =========================================
+   TIPOGRAFIA UNIFICADA - PLANTBEE
+   ========================================= */
+
+/* TITULOS PRINCIPALES DE LOS MODULOS */
+
+.main-layout .page-title {
+    -fx-font-family: "System";
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* TITULOS QUE NO TIENEN CLASE PROPIA */
+
+.main-layout .plantas-page > .label:first-child,
+.main-layout .riegos-page > .label:first-child {
+    -fx-font-family: "System";
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* SUBTITULOS DE SECCIONES */
+
+.main-layout .section-title {
+    -fx-font-family: "System";
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* ETIQUETAS DE FORMULARIOS */
+
+.main-layout .field-label {
+    -fx-font-family: "System";
+    -fx-font-size: 14px;
+}
+
+/* CAMPOS DE TEXTO */
+
+.main-layout .text-field,
+.main-layout .combo-box,
+.main-layout .date-picker,
+.main-layout .spinner {
+    -fx-font-family: "System";
+    -fx-font-size: 14px;
+}
+
+/* BOTONES DE TODAS LAS PANTALLAS */
+
+.main-layout .button {
+    -fx-font-family: "System";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* TEXTO DE LAS TABLAS */
+
+.main-layout .table-view {
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+}
+
+/* ENCABEZADOS DE LAS TABLAS */
+
+.main-layout .table-view .column-header .label {
+    -fx-font-family: "System";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* PESTAÑAS DE NAVEGACION */
+
+.tab-pane.plantbee-tabs .tab-header-area .tab .tab-label {
+    -fx-font-family: "System";
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}

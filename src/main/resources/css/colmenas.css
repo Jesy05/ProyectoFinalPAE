@@ -1,0 +1,158 @@
+
+/* =========================================
+   PLANTBEE - GESTION DE COLMENAS
+   ========================================= */
+
+.colmena-page {
+    -fx-background-color: #ECF5E2;
+    -fx-padding: 22;
+    -fx-spacing: 14;
+    -fx-font-family: "System";
+}
+
+/* TITULOS */
+
+.colmena-page .page-title {
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+.colmena-page .page-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #657733;
+}
+
+.colmena-page .section-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* TARJETAS */
+
+.colmena-page .plantbee-card {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+/* ETIQUETAS */
+
+.colmena-page .field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* CAMPOS */
+
+.colmena-page .text-field,
+.colmena-page .combo-box,
+.colmena-page .date-picker,
+.colmena-page .spinner {
+    -fx-background-color: #FFFDF1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #D7E3A4;
+    -fx-pref-height: 42;
+}
+
+/* BOTONES GENERALES */
+
+.colmena-page .button {
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 10 20;
+    -fx-pref-height: 42;
+    -fx-cursor: hand;
+}
+
+/* NUEVO */
+
+.colmena-page .button.btn-nuevo {
+    -fx-background-color: #EAD465;
+    -fx-text-fill: #254E06;
+}
+
+.colmena-page .button.btn-nuevo:hover {
+    -fx-background-color: #D4C04D;
+}
+
+/* GUARDAR */
+
+.colmena-page .button.btn-guardar {
+    -fx-background-color: #006850;
+    -fx-text-fill: white;
+}
+
+.colmena-page .button.btn-guardar:hover {
+    -fx-background-color: #004F2E;
+}
+
+/* ELIMINAR */
+
+.colmena-page .button.btn-eliminar {
+    -fx-background-color: #F3DED7;
+    -fx-text-fill: #8B3528;
+}
+
+.colmena-page .button.btn-eliminar:hover {
+    -fx-background-color: #EBC4B8;
+}
+
+/* RECARGAR */
+
+.colmena-page .button.btn-recargar {
+    -fx-background-color: #B7D17A;
+    -fx-text-fill: #254E06;
+}
+
+.colmena-page .button.btn-recargar:hover {
+    -fx-background-color: #9DBD60;
+}
+
+/* VER TODOS */
+
+.colmena-page .button.btn-ver-todos {
+    -fx-background-color: #F5EAB9;
+    -fx-text-fill: #254E06;
+}
+
+.colmena-page .button.btn-ver-todos:hover {
+    -fx-background-color: #EAD465;
+}
+
+/* TABLAS */
+
+.colmena-page .table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #EAD465;
+}
+
+.colmena-page .table-view .column-header,
+.colmena-page .table-view .column-header-background {
+    -fx-background-color: #254E06;
+}
+
+.colmena-page .table-view .column-header .label {
+    -fx-text-fill: #F5EAB9;
+    -fx-font-weight: bold;
+}
+
+.colmena-page .table-row-cell:odd {
+    -fx-background-color: #ECF5E2;
+}
+
+.colmena-page .table-row-cell:even {
+    -fx-background-color: #FFFDF1;
+}
+
+.colmena-page .table-row-cell:filled:selected {
+    -fx-background-color: #B7D17A;
+}

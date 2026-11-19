@@ -1,0 +1,144 @@
+
+/* =========================================
+   PLANTBEE - GESTION DE PLANTAS
+   ========================================= */
+
+.plantas-page {
+    -fx-background-color: #ECF5E2;
+    -fx-padding: 20;
+    -fx-spacing: 14;
+    -fx-font-family: "System";
+}
+
+/* TITULO */
+
+.plantas-page .page-title {
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #254E06;
+}
+
+/* ETIQUETAS */
+
+.plantas-page .label {
+    -fx-text-fill: #254E06;
+    -fx-font-size: 13px;
+}
+
+/* CAMPOS */
+
+.plantas-page .text-field,
+.plantas-page .combo-box,
+.plantas-page .date-picker {
+    -fx-background-color: #FFFDF1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #D7E3A4;
+    -fx-pref-height: 42;
+    -fx-font-size: 13px;
+}
+
+.plantas-page .text-field:focused,
+.plantas-page .combo-box:focused,
+.plantas-page .date-picker:focused {
+    -fx-border-color: #80A32F;
+    -fx-border-width: 2;
+}
+
+/* BOTONES */
+
+.plantas-page .button {
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 10 18;
+    -fx-pref-height: 42;
+    -fx-cursor: hand;
+}
+
+.plantas-page .button.btn-nuevo {
+    -fx-background-color: #EAD465;
+    -fx-text-fill: #254E06;
+}
+
+.plantas-page .button.btn-nuevo:hover {
+    -fx-background-color: #D4C04D;
+}
+
+.plantas-page .button.btn-guardar {
+    -fx-background-color: #006850;
+    -fx-text-fill: white;
+}
+
+.plantas-page .button.btn-guardar:hover {
+    -fx-background-color: #004F2E;
+}
+
+.plantas-page .button.btn-eliminar {
+    -fx-background-color: #F3DED7;
+    -fx-text-fill: #8B3528;
+}
+
+.plantas-page .button.btn-eliminar:hover {
+    -fx-background-color: #EBC4B8;
+}
+
+.plantas-page .button.btn-recargar {
+    -fx-background-color: #B7D17A;
+    -fx-text-fill: #254E06;
+}
+
+.plantas-page .button.btn-recargar:hover {
+    -fx-background-color: #9DBD60;
+}
+
+.plantas-page .button.btn-simular {
+    -fx-background-color: #254E06;
+    -fx-text-fill: white;
+}
+
+.plantas-page .button.btn-simular:hover {
+    -fx-background-color: #006850;
+}
+
+.plantas-page .button.btn-ver-todas {
+    -fx-background-color: #F5EAB9;
+    -fx-text-fill: #254E06;
+}
+
+.plantas-page .button.btn-ver-todas:hover {
+    -fx-background-color: #EAD465;
+}
+
+/* TABLA */
+
+.plantas-page .table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #EAD465;
+}
+
+.plantas-page .table-view .column-header,
+.plantas-page .table-view .column-header-background {
+    -fx-background-color: #254E06;
+}
+
+.plantas-page .table-view .column-header .label {
+    -fx-text-fill: #F5EAB9;
+    -fx-font-weight: bold;
+}
+
+.plantas-page .table-row-cell:even {
+    -fx-background-color: #FFFDF1;
+}
+
+.plantas-page .table-row-cell:odd {
+    -fx-background-color: #ECF5E2;
+}
+
+.plantas-page .table-row-cell:filled:selected {
+    -fx-background-color: #B7D17A;
+}
