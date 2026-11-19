@@ -11,13 +11,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-
+import ni.edu.uam.proyectofinalpae.api.ApiServidor;
 import ni.edu.uam.proyectofinalpae.util.HibernateUtil;
 import ni.edu.uam.proyectofinalpae.util.Mensajes;
 
 import java.net.URL;
 
 public class App extends Application {
+
+    private final ApiServidor api = new ApiServidor();
 
     @Override
     public void start(Stage stage) {
@@ -26,6 +28,7 @@ public class App extends Application {
 
             // 1. Inicializar Hibernate
             HibernateUtil.getSessionFactory();
+            api.iniciar();
 
             // 2. Cargar interfaz principal
             URL vista = App.class.getResource(
@@ -120,6 +123,8 @@ public class App extends Application {
         }
     }
 
+
+
     private void verificarInterfaz(Scene scene) {
 
         Node navegacion = scene.lookup(".plantbee-tabs");
@@ -172,6 +177,7 @@ public class App extends Application {
 
     @Override
     public void stop() {
+        api.detener();
         HibernateUtil.cerrar();
     }
 
