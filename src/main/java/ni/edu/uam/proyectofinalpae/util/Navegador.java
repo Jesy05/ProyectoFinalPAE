@@ -52,8 +52,11 @@ public final class Navegador {
         if (panel != null) {
             // En pantallas pequenas cada pestana se desplaza en vez de aplastar las tablas
             for (Node nodo : panel.lookupAll(".tab-pane")) {
-                for (Tab tab : ((TabPane) nodo).getTabs()) {
+                TabPane pestanas = (TabPane) nodo;
+                for (Tab tab : pestanas.getTabs()) {
                     if (tab.getContent() != null && !(tab.getContent() instanceof ScrollPane)) {
+                        // Se guarda la pantalla original para poder buscar su boton Recargar
+                        tab.setUserData(tab.getContent());
                         ScrollPane scroll = new ScrollPane(tab.getContent());
                         scroll.setFitToWidth(true);
                         scroll.setFitToHeight(true);
@@ -61,10 +64,26 @@ public final class Navegador {
                         tab.setContent(scroll);
                     }
                 }
+                // Cada pestana se actualiza al abrirla: asi una usuaria registrada en Usuarios
+                // aparece de inmediato en el combo de Dueno de Colmenas
+                pestanas.getSelectionModel().selectedItemProperty()
+                        .addListener((obs, anterior, actual) -> recargar(actual));
             }
             Node inicio = panel.lookup("#btnInicio");
             if (inicio instanceof Button boton) {
                 boton.setOnAction(e -> irBienvenida());
+            }
+        }
+    }
+
+    /** Presiona el boton Recargar de la pestana: vuelve a leer sus combos y su tabla desde la base. */
+    private static void recargar(Tab tab) {
+        if (tab != null && tab.getUserData() instanceof Parent pantalla) {
+            for (Node nodo : pantalla.lookupAll(".button")) {
+                if (nodo instanceof Button boton && "Recargar".equals(boton.getText())) {
+                    boton.fire();
+                    return;
+                }
             }
         }
     }
