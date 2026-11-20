@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import ni.edu.uam.proyectofinalpae.util.LogoPlantBee?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<!-- Onboarding: 4 pasos cortos que explican que es PlantBee -->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ni.edu.uam.proyectofinalpae.controller.OnboardingController"
+            styleClass="onboarding">
+
+    <top>
+        <HBox styleClass="onboarding-barra" alignment="CENTER_LEFT" spacing="12">
+            <Button styleClass="btn-logo" onAction="#volverInicio">
+                <graphic>
+                    <LogoPlantBee alto="46" conTexto="true" color="#004F2E"/>
+                </graphic>
+            </Button>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Saltar" styleClass="btn-texto" onAction="#saltar">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2s-skip-next" iconSize="18"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane>
+            <VBox styleClass="onboarding-tarjeta" alignment="CENTER" spacing="16" maxWidth="620" maxHeight="440">
+                <StackPane fx:id="contenedorIcono" styleClass="onboarding-circulo"/>
+                <Label fx:id="lblPaso" styleClass="onboarding-paso"/>
+                <Label fx:id="lblTitulo" styleClass="onboarding-titulo" wrapText="true"/>
+                <Label fx:id="lblTexto" styleClass="onboarding-texto" wrapText="true"/>
+                <HBox fx:id="puntos" alignment="CENTER" spacing="8"/>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="onboarding-acciones" alignment="CENTER" spacing="14">
+            <Button fx:id="btnAtras" text="Atrás" styleClass="btn-secundario" onAction="#atras">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2a-arrow-left" iconSize="18"/>
+                </graphic>
+            </Button>
+            <Button fx:id="btnSiguiente" text="Siguiente" styleClass="btn-primario"
+                    onAction="#siguiente" defaultButton="true"/>
+        </HBox>
+    </bottom>
+</BorderPane>

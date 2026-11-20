@@ -110,8 +110,7 @@
 
 /* TEXTO ACTIVO */
 
-.tab-pane.plantbee-tabs .tab-header-area
-.tab:selected .tab-label {
+.tab-pane.plantbee-tabs .tab-header-area .tab:selected .tab-label {
     -fx-text-fill: #FFFFFF;
 }
 

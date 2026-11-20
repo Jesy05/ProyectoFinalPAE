@@ -27,8 +27,9 @@ public class ApiServidor {
             System.out.println("API PlantBee en http://localhost:" + PUERTO + "/api/health");
         } catch (IOException e) {
             servidor = null;
-            System.out.println("No se pudo iniciar la API en el puerto " + PUERTO
-                    + ". La aplicacion sigue funcionando sin API. Detalle: " + e.getMessage());
+            System.out.println("La API no se inicio porque el puerto " + PUERTO
+                    + " ya esta en uso (probablemente hay otra ventana de PlantBee abierta). "
+                    + "La aplicacion de escritorio funciona igual.");
         }
     }
 

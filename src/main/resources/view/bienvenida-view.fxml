@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import ni.edu.uam.proyectofinalpae.util.LogoPlantBee?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<!-- Pantalla de entrada (landing) de PlantBee -->
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ni.edu.uam.proyectofinalpae.controller.BienvenidaController"
+      styleClass="bienvenida">
+
+    <!-- Columna izquierda: mensaje y acciones -->
+    <VBox styleClass="bienvenida-info" HBox.hgrow="ALWAYS" spacing="18">
+
+        <LogoPlantBee alto="110" conTexto="true" color="#004F2E"/>
+
+        <VBox spacing="10">
+            <Label text="Cultivá tus propios alimentos en casa"
+                   styleClass="bienvenida-titulo" wrapText="true"/>
+            <Label text="Sin importar el espacio ni el tiempo que tengas. PlantBee administra tus colmenas de huerto vertical, sus sensores de humedad y el riego con agua recuperada."
+                   styleClass="bienvenida-texto" wrapText="true"/>
+        </VBox>
+
+        <VBox spacing="12">
+            <HBox styleClass="bienvenida-beneficio" spacing="14">
+                <StackPane styleClass="beneficio-icono">
+                    <FontIcon iconLiteral="mdi2h-hexagon-multiple" iconSize="22"/>
+                </StackPane>
+                <VBox spacing="2">
+                    <Label text="Módulos hexagonales apilables" styleClass="beneficio-titulo"/>
+                    <Label text="Hechos con plástico reciclado, ideales para balcones." styleClass="beneficio-texto"/>
+                </VBox>
+            </HBox>
+            <HBox styleClass="bienvenida-beneficio" spacing="14">
+                <StackPane styleClass="beneficio-icono">
+                    <FontIcon iconLiteral="mdi2w-water-percent" iconSize="22"/>
+                </StackPane>
+                <VBox spacing="2">
+                    <Label text="Sensores de humedad y alertas" styleClass="beneficio-titulo"/>
+                    <Label text="Te avisa cuándo cada planta necesita agua." styleClass="beneficio-texto"/>
+                </VBox>
+            </HBox>
+            <HBox styleClass="bienvenida-beneficio" spacing="14">
+                <StackPane styleClass="beneficio-icono">
+                    <FontIcon iconLiteral="mdi2w-weather-rainy" iconSize="22"/>
+                </StackPane>
+                <VBox spacing="2">
+                    <Label text="Riego con agua recuperada" styleClass="beneficio-titulo"/>
+                    <Label text="Lluvia y agua gris filtrada por un biofiltro natural." styleClass="beneficio-texto"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <HBox spacing="12">
+            <Button text="Conocer PlantBee" styleClass="btn-primario" onAction="#comenzar" defaultButton="true">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2a-arrow-right" iconSize="18"/>
+                </graphic>
+            </Button>
+            <Button text="Ir al panel" styleClass="btn-secundario" onAction="#irAlPanel">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2v-view-dashboard" iconSize="18"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+
+    <!-- Columna derecha: simbolo grande de la colmena -->
+    <StackPane styleClass="bienvenida-arte" minWidth="420" prefWidth="460">
+        <LogoPlantBee alto="320" conTexto="false" color="#F5EAB9"/>
+        <Label text="Huertos verticales modulares para espacios urbanos"
+               styleClass="bienvenida-arte-texto"
+               StackPane.alignment="BOTTOM_CENTER"/>
+    </StackPane>
+</HBox>
