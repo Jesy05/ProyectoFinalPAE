@@ -104,6 +104,28 @@
 
     </HBox>
 
+    <VBox spacing="8" styleClass="plantbee-card">
+        <Label text="Ficha del cultivo en Wikipedia" styleClass="section-title"/>
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label text="Cultivo:" styleClass="field-label"/>
+            <TextField fx:id="txtConsultaWikipedia"
+                       promptText="Ej. Albahaca"
+                       prefWidth="220"/>
+            <Button fx:id="btnConsultarWikipedia"
+                    text="Consultar Wikipedia"
+                    onAction="#consultarWikipedia"
+                    styleClass="btn-recargar"/>
+        </HBox>
+        <Label fx:id="lblWikipediaTitulo" text="Sin consulta" styleClass="page-title"/>
+        <Label fx:id="lblWikipediaDescripcion" text="" wrapText="true"/>
+        <Label fx:id="lblWikipediaExtracto"
+               text="Seleccione una planta para consultar informacion."
+               wrapText="true"/>
+        <Hyperlink fx:id="lnkWikipedia"
+                   text="Wikipedia"
+                   onAction="#abrirWikipedia"/>
+    </VBox>
+
     <HBox spacing="8" alignment="CENTER_LEFT">
 
         <Label text="Ver plantas de la colmena:"/>

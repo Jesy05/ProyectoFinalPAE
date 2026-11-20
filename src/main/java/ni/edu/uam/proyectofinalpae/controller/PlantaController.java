@@ -2,6 +2,7 @@ package ni.edu.uam.proyectofinalpae.controller;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -10,7 +11,9 @@ import ni.edu.uam.proyectofinalpae.dao.CultivoDao;
 import ni.edu.uam.proyectofinalpae.dao.ModuloDao;
 import ni.edu.uam.proyectofinalpae.dao.PlantaDao;
 import ni.edu.uam.proyectofinalpae.dao.SensorDao;
+import ni.edu.uam.proyectofinalpae.dto.WikipediaSummary;
 import ni.edu.uam.proyectofinalpae.model.*;
+import ni.edu.uam.proyectofinalpae.service.WikipediaService;
 import ni.edu.uam.proyectofinalpae.util.Mensajes;
 
 import java.time.LocalDate;
@@ -34,12 +37,19 @@ public class PlantaController {
     @FXML private TableColumn<Planta, String> colEstado;
     @FXML private TableColumn<Planta, String> colHumedad;
     @FXML private TableColumn<Planta, LocalDate> colSiembra;
+    @FXML private TextField txtConsultaWikipedia;
+    @FXML private Label lblWikipediaTitulo;
+    @FXML private Label lblWikipediaDescripcion;
+    @FXML private Label lblWikipediaExtracto;
+    @FXML private Hyperlink lnkWikipedia;
+    @FXML private Button btnConsultarWikipedia;
 
     private final PlantaDao plantaDao = new PlantaDao();
     private final SensorDao sensorDao = new SensorDao();
     private final CultivoDao cultivoDao = new CultivoDao();
     private final ModuloDao moduloDao = new ModuloDao();
     private final ColmenaDao colmenaDao = new ColmenaDao();
+    private final WikipediaService wikipediaService = new WikipediaService();
     private Planta seleccionada;
 
     @FXML
@@ -95,6 +105,81 @@ public class PlantaController {
         cbEstado.setValue("Germinando");
         txtCodigoSensor.clear();
         txtHumedad.setText("60");
+        txtConsultaWikipedia.clear();
+        lblWikipediaTitulo.setText("Sin consulta");
+        lblWikipediaDescripcion.setText("");
+        lblWikipediaExtracto.setText("Seleccione una planta para consultar informacion.");
+        lnkWikipedia.setText("Wikipedia");
+        lnkWikipedia.setUserData("");
+    }
+
+    @FXML
+    private void consultarWikipedia() {
+        String consulta = txtConsultaWikipedia.getText() == null
+                ? "" : txtConsultaWikipedia.getText().trim();
+        if (consulta.isEmpty() && seleccionada != null && seleccionada.getCultivo() != null) {
+            String cientifico = seleccionada.getCultivo().getNombreCientifico();
+            consulta = cientifico == null || cientifico.isBlank()
+                    ? seleccionada.getCultivo().getNombre() : cientifico;
+            txtConsultaWikipedia.setText(consulta);
+        }
+        if (consulta.isEmpty()) {
+            Mensajes.advertencia("Escriba un cultivo o seleccione una planta.");
+            return;
+        }
+
+        String consultaFinal = consulta;
+        btnConsultarWikipedia.setDisable(true);
+        lblWikipediaTitulo.setText("Consultando...");
+        lblWikipediaExtracto.setText("Consultando Wikipedia...");
+
+        Task<WikipediaSummary> task = new Task<>() {
+            @Override
+            protected WikipediaSummary call() throws Exception {
+                return wikipediaService.consultar(consultaFinal);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            WikipediaSummary result = task.getValue();
+            lblWikipediaTitulo.setText(result.title());
+            lblWikipediaDescripcion.setText(result.description());
+            lblWikipediaExtracto.setText(result.extract());
+            lnkWikipedia.setText(result.pageUrl().isBlank() ? "Wikipedia" : result.pageUrl());
+            lnkWikipedia.setUserData(result.pageUrl());
+            btnConsultarWikipedia.setDisable(false);
+        });
+
+        task.setOnFailed(event -> {
+            lblWikipediaTitulo.setText("Consulta no disponible");
+            lblWikipediaExtracto.setText("No se pudo consultar Wikipedia.");
+            btnConsultarWikipedia.setDisable(false);
+            Throwable cause = task.getException();
+            Exception detail = cause instanceof Exception exception
+                    ? exception : new RuntimeException(cause);
+            Mensajes.error("No se pudo consultar la ficha del cultivo.", detail);
+        });
+
+        Thread worker = new Thread(task, "plantbee-wikipedia-query");
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    @FXML
+    private void abrirWikipedia() {
+        Object value = lnkWikipedia.getUserData();
+        if (!(value instanceof String url) || url.isBlank()) {
+            return;
+        }
+        try {
+            if (!java.awt.Desktop.isDesktopSupported()
+                    || !java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.BROWSE)) {
+                throw new IllegalStateException("El sistema no permite abrir el navegador.");
+            }
+            java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+        } catch (Exception ex) {
+            Mensajes.error("No se pudo abrir el enlace de Wikipedia.", ex);
+        }
     }
 
     @FXML
@@ -199,6 +284,11 @@ public class PlantaController {
     private void cargarFormulario(Planta planta) {
         seleccionada = planta;
         if (planta == null) return;
+        if (planta.getCultivo() != null) {
+            String cientifico = planta.getCultivo().getNombreCientifico();
+            txtConsultaWikipedia.setText(cientifico == null || cientifico.isBlank()
+                    ? planta.getCultivo().getNombre() : cientifico);
+        }
         txtApodo.setText(planta.getApodo() == null ? "" : planta.getApodo());
         cbCultivo.getItems().stream().filter(c -> c.getId().equals(planta.getCultivo().getId()))
                 .findFirst().ifPresent(cbCultivo::setValue);
