@@ -21,13 +21,17 @@
                    prefWidth="80"
                    promptText="ml"/>
 
-        <Label text="ml"/>
+        <Label text="ml" minWidth="-Infinity"/>
 
         <ComboBox fx:id="cbOrigen"
-                  prefWidth="220"/>
+                  prefWidth="240"/>
 
         <ComboBox fx:id="cbModo"
-                  prefWidth="120"/>
+                  prefWidth="140"/>
+
+    </HBox>
+
+    <HBox spacing="8" alignment="CENTER_LEFT">
 
         <Button text="Registrar riego"
                 styleClass="btn-registrar"

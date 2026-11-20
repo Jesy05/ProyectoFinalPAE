@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import ni.edu.uam.proyectofinalpae.util.LogoPlantBee?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -12,9 +13,13 @@
                   spacing="12"
                   styleClass="main-header">
 
-                <VBox spacing="4">
-                    <Label text="PlantBee"
-                           styleClass="brand-title"/>
+                <LogoPlantBee alto="58" conTexto="true" color="#F5EAB9"/>
+
+                <Separator orientation="VERTICAL" styleClass="header-separador"/>
+
+                <VBox spacing="2" alignment="CENTER_LEFT">
+                    <Label text="Panel de control"
+                           styleClass="header-panel"/>
 
                     <Label
                             text="Huertos verticales modulares para espacios urbanos"
@@ -25,6 +30,10 @@
 
                 <Label text="Cultivando un futuro sostenible"
                        styleClass="header-caption"/>
+
+                <Button fx:id="btnInicio"
+                        text="Inicio"
+                        styleClass="btn-inicio"/>
             </HBox>
         </VBox>
     </top>
