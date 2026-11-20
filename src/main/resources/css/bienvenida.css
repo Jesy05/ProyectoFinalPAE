@@ -1,0 +1,264 @@
+/* =========================================
+   PLANTBEE - BIENVENIDA, ONBOARDING E ICONOS
+   Archivo: bienvenida.css
+   Paleta: verde #004F2E / #006850, hoja #9DBD60,
+           amarillo #EAD465, crema #F5EAB9 / #FFFDF1
+   ========================================= */
+
+/* 01. BOTONES COMPARTIDOS */
+
+.btn-primario,
+.btn-secundario {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 12 26;
+    -fx-cursor: hand;
+    -fx-graphic-text-gap: 10;
+}
+
+.btn-primario {
+    -fx-background-color: #006850;
+    -fx-text-fill: #FFFDF1;
+}
+
+.btn-primario:hover {
+    -fx-background-color: #004F2E;
+}
+
+.btn-primario .ikonli-font-icon {
+    -fx-icon-color: #EAD465;
+}
+
+.btn-secundario {
+    -fx-background-color: transparent;
+    -fx-border-color: #006850;
+    -fx-border-width: 2;
+    -fx-text-fill: #004F2E;
+}
+
+.btn-secundario:hover {
+    -fx-background-color: #ECF5E2;
+}
+
+.btn-secundario .ikonli-font-icon {
+    -fx-icon-color: #006850;
+}
+
+.btn-secundario:disabled {
+    -fx-opacity: 0.35;
+}
+
+.btn-texto {
+    -fx-background-color: transparent;
+    -fx-text-fill: #004F2E;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-texto .ikonli-font-icon {
+    -fx-icon-color: #004F2E;
+}
+
+.btn-texto:hover {
+    -fx-underline: true;
+}
+
+.btn-logo {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+/* 02. LANDING */
+
+.bienvenida {
+    -fx-background-color: #F5EAB9;
+}
+
+.bienvenida-info {
+    -fx-padding: 48 56;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.bienvenida-titulo {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #004F2E;
+}
+
+.bienvenida-texto {
+    -fx-font-size: 15px;
+    -fx-text-fill: #254E06;
+    -fx-line-spacing: 3;
+    -fx-max-width: 560;
+}
+
+.bienvenida-beneficio {
+    -fx-background-color: #FFFDF1;
+    -fx-background-radius: 16;
+    -fx-padding: 12 18;
+    -fx-alignment: CENTER_LEFT;
+    -fx-max-width: 560;
+    -fx-effect: dropshadow(gaussian, rgba(0, 79, 46, 0.10), 10, 0, 0, 3);
+}
+
+.beneficio-icono {
+    -fx-background-color: #ECF5E2;
+    -fx-background-radius: 12;
+    -fx-min-width: 44;
+    -fx-min-height: 44;
+    -fx-max-width: 44;
+    -fx-max-height: 44;
+}
+
+.beneficio-icono .ikonli-font-icon {
+    -fx-icon-color: #006850;
+}
+
+.beneficio-titulo {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #004F2E;
+}
+
+.beneficio-texto {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: #657733;
+}
+
+.bienvenida-arte {
+    -fx-background-color: linear-gradient(to bottom, #006850, #004F2E);
+    -fx-padding: 40 30 34 30;
+}
+
+.bienvenida-arte-texto {
+    -fx-text-fill: #EAD465;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* 03. ONBOARDING */
+
+.onboarding {
+    -fx-background-color: #F5EAB9;
+}
+
+.onboarding-barra {
+    -fx-padding: 18 34;
+}
+
+.onboarding-tarjeta {
+    -fx-background-color: #FFFDF1;
+    -fx-background-radius: 26;
+    -fx-padding: 38 48;
+    -fx-effect: dropshadow(gaussian, rgba(0, 79, 46, 0.16), 24, 0, 0, 6);
+}
+
+.onboarding-circulo {
+    -fx-background-color: #ECF5E2;
+    -fx-background-radius: 60;
+    -fx-min-width: 120;
+    -fx-min-height: 120;
+    -fx-max-width: 120;
+    -fx-max-height: 120;
+    -fx-border-color: #EAD465;
+    -fx-border-width: 3;
+    -fx-border-radius: 60;
+}
+
+.onboarding-icono {
+    -fx-icon-color: #006850;
+}
+
+.onboarding-paso {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #80A32F;
+}
+
+.onboarding-titulo {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #004F2E;
+    -fx-text-alignment: center;
+}
+
+.onboarding-texto {
+    -fx-font-size: 15px;
+    -fx-text-fill: #254E06;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-line-spacing: 3;
+}
+
+.onboarding-punto {
+    -fx-background-color: #D7E3A4;
+    -fx-background-radius: 6;
+    -fx-min-width: 10;
+    -fx-min-height: 10;
+    -fx-max-width: 10;
+    -fx-max-height: 10;
+}
+
+.onboarding-punto.activo {
+    -fx-background-color: #006850;
+    -fx-min-width: 28;
+    -fx-max-width: 28;
+}
+
+.onboarding-acciones {
+    -fx-padding: 10 0 36 0;
+}
+
+/* 04. ENCABEZADO DEL PANEL */
+
+.header-separador .line {
+    -fx-border-color: #2F6B4B;
+}
+
+.header-panel {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F5EAB9;
+}
+
+.btn-inicio {
+    -fx-background-color: transparent;
+    -fx-border-color: #EAD465;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-text-fill: #F5EAB9;
+    -fx-font-weight: bold;
+    -fx-padding: 7 16;
+    -fx-cursor: hand;
+}
+
+.btn-inicio:hover {
+    -fx-background-color: #006850;
+}
+
+/* 05. ICONOS DE LAS PESTANAS */
+
+.tab-pane.plantbee-tabs .tab .tab-icon {
+    -fx-icon-color: #254E06;
+}
+
+.tab-pane.plantbee-tabs .tab:selected .tab-icon {
+    -fx-icon-color: #EAD465;
+}
+
+/* 06. TABLAS VACIAS */
+
+.tabla-vacia {
+    -fx-text-fill: #657733;
+    -fx-font-size: 13px;
+    -fx-graphic-text-gap: 8;
+}
+
+.tabla-vacia .ikonli-font-icon {
+    -fx-icon-color: #9DBD60;
+}
