@@ -108,7 +108,7 @@ public class PlantaController {
         txtConsultaWikipedia.clear();
         lblWikipediaTitulo.setText("Sin consulta");
         lblWikipediaDescripcion.setText("");
-        lblWikipediaExtracto.setText("Seleccione una planta para consultar informacion.");
+        lblWikipediaExtracto.setText("Seleccione una planta para consultar información.");
         lnkWikipedia.setText("Wikipedia");
         lnkWikipedia.setUserData("");
     }

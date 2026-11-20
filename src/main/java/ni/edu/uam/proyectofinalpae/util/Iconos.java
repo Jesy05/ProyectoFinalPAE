@@ -39,7 +39,8 @@ public final class Iconos {
             Map.entry("Simular lectura de sensores", "mdi2w-water-percent"),
             Map.entry("Registrar riego", "mdi2w-weather-rainy"),
             Map.entry("Revisar sensores", "mdi2b-bell-ring"),
-            Map.entry("Marcar como atendida", "mdi2c-check-circle")
+            Map.entry("Marcar como atendida", "mdi2c-check-circle"),
+            Map.entry("Consultar Wikipedia", "mdi2w-wikipedia")
     );
 
     private Iconos() {
