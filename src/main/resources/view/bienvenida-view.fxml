@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import ni.edu.uam.proyectofinalpae.util.LogoPlantBee?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -67,8 +69,16 @@
     </VBox>
 
     <!-- Columna derecha: simbolo grande de la colmena -->
-    <StackPane styleClass="bienvenida-arte" minWidth="420" prefWidth="460">
-        <LogoPlantBee alto="320" conTexto="false" color="#F5EAB9"/>
+    <StackPane styleClass="bienvenida-arte" minWidth="380" prefWidth="440">
+        <HBox alignment="CENTER" spacing="26">
+            <LogoPlantBee alto="250" conTexto="false" color="#F5EAB9"/>
+            <!-- Ilustracion del prototipo: torre de modulos hexagonales con ruedas -->
+            <ImageView fitHeight="400" preserveRatio="true" smooth="true" styleClass="bienvenida-huerto">
+                <image>
+                    <Image url="@../img/huerto-plantbee.png"/>
+                </image>
+            </ImageView>
+        </HBox>
         <Label text="Huertos verticales modulares para espacios urbanos"
                styleClass="bienvenida-arte-texto"
                StackPane.alignment="BOTTOM_CENTER"/>
