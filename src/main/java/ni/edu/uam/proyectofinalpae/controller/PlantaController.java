@@ -151,13 +151,29 @@ public class PlantaController {
         });
 
         task.setOnFailed(event -> {
-            lblWikipediaTitulo.setText("Consulta no disponible");
-            lblWikipediaExtracto.setText("No se pudo consultar Wikipedia.");
             btnConsultarWikipedia.setDisable(false);
             Throwable cause = task.getException();
+            String recomendacion = "Tal vez el nombre de la planta no está bien escrito. "
+                    + "Revise la ortografía o pruebe con su nombre científico "
+                    + "(por ejemplo, Albahaca u Ocimum basilicum).";
+
+            // Wikipedia responde 404 cuando no existe una pagina con ese nombre
+            if (cause != null && cause.getMessage() != null && cause.getMessage().contains("404")) {
+                lblWikipediaTitulo.setText("Cultivo no encontrado");
+                lblWikipediaExtracto.setText("No encontramos \"" + consultaFinal + "\" en Wikipedia. "
+                        + recomendacion);
+                Mensajes.advertencia("No encontramos \"" + consultaFinal + "\" en Wikipedia.\n\n"
+                        + recomendacion);
+                return;
+            }
+
+            lblWikipediaTitulo.setText("Consulta no disponible");
+            lblWikipediaExtracto.setText("No se pudo consultar Wikipedia. " + recomendacion
+                    + " También revise su conexión a internet.");
             Exception detail = cause instanceof Exception exception
                     ? exception : new RuntimeException(cause);
-            Mensajes.error("No se pudo consultar la ficha del cultivo.", detail);
+            Mensajes.error("No se pudo consultar la ficha del cultivo.\n\n" + recomendacion
+                    + "\nTambién revise su conexión a internet.", detail);
         });
 
         Thread worker = new Thread(task, "plantbee-wikipedia-query");
