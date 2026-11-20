@@ -5,6 +5,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,6 +50,18 @@ public final class Navegador {
     public static void irPanel() {
         Parent panel = mostrar("main-view.fxml");
         if (panel != null) {
+            // En pantallas pequenas cada pestana se desplaza en vez de aplastar las tablas
+            for (Node nodo : panel.lookupAll(".tab-pane")) {
+                for (Tab tab : ((TabPane) nodo).getTabs()) {
+                    if (tab.getContent() != null && !(tab.getContent() instanceof ScrollPane)) {
+                        ScrollPane scroll = new ScrollPane(tab.getContent());
+                        scroll.setFitToWidth(true);
+                        scroll.setFitToHeight(true);
+                        scroll.getStyleClass().add("panel-scroll");
+                        tab.setContent(scroll);
+                    }
+                }
+            }
             Node inicio = panel.lookup("#btnInicio");
             if (inicio instanceof Button boton) {
                 boton.setOnAction(e -> irBienvenida());

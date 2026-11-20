@@ -79,7 +79,7 @@
 }
 
 .bienvenida-info {
-    -fx-padding: 48 56;
+    -fx-padding: 32 56;
     -fx-alignment: CENTER_LEFT;
 }
 
@@ -261,4 +261,19 @@
 
 .tabla-vacia .ikonli-font-icon {
     -fx-icon-color: #9DBD60;
+}
+
+/* 07. DESPLAZAMIENTO EN PANTALLAS PEQUENAS */
+
+.panel-scroll,
+.panel-scroll > .viewport {
+    -fx-background-color: #ECF5E2;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+/* Las tablas nunca se aplastan: si no cabe, aparece la barra de desplazamiento */
+.main-layout .table-view {
+    -fx-min-height: 200;
 }

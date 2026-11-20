@@ -2,6 +2,8 @@ package ni.edu.uam.proyectofinalpae;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -48,7 +50,12 @@ public class App extends Application {
 
             // 2. Primera pantalla: bienvenida
             Parent bienvenida = Navegador.cargar("bienvenida-view.fxml");
-            Scene scene = new Scene(bienvenida, 1200, 750);
+
+            // Tamano segun la pantalla: con escalado de Windows (125 %, 150 %) el espacio real es menor
+            Rectangle2D pantalla = Screen.getPrimary().getVisualBounds();
+            double ancho = Math.min(1200, pantalla.getWidth() * 0.92);
+            double alto = Math.min(750, pantalla.getHeight() * 0.90);
+            Scene scene = new Scene(bienvenida, ancho, alto);
 
             // 3. Hojas de estilo
             for (String archivo : ESTILOS) {
@@ -62,11 +69,13 @@ public class App extends Application {
 
             // 4. Ventana
             stage.setScene(scene);
-            stage.setMinWidth(1050);
-            stage.setMinHeight(680);
+            // El minimo nunca puede ser mayor que la pantalla, si no la ventana no se deja achicar
+            stage.setMinWidth(Math.min(900, pantalla.getWidth()));
+            stage.setMinHeight(Math.min(560, pantalla.getHeight()));
             stage.setTitle("PlantBee - Huertos verticales modulares");
             stage.getIcons().add(LogoPlantBee.icono(64));
             stage.show();
+            stage.centerOnScreen();
 
         } catch (Exception e) {
             e.printStackTrace();

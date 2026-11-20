@@ -11,9 +11,9 @@
       styleClass="bienvenida">
 
     <!-- Columna izquierda: mensaje y acciones -->
-    <VBox styleClass="bienvenida-info" HBox.hgrow="ALWAYS" spacing="22">
+    <VBox styleClass="bienvenida-info" HBox.hgrow="ALWAYS" spacing="18">
 
-        <LogoPlantBee alto="130" conTexto="true" color="#004F2E"/>
+        <LogoPlantBee alto="110" conTexto="true" color="#004F2E"/>
 
         <VBox spacing="10">
             <Label text="Cultivá tus propios alimentos en casa"
@@ -68,7 +68,7 @@
 
     <!-- Columna derecha: simbolo grande de la colmena -->
     <StackPane styleClass="bienvenida-arte" minWidth="420" prefWidth="460">
-        <LogoPlantBee alto="360" conTexto="false" color="#F5EAB9"/>
+        <LogoPlantBee alto="320" conTexto="false" color="#F5EAB9"/>
         <Label text="Huertos verticales modulares para espacios urbanos"
                styleClass="bienvenida-arte-texto"
                StackPane.alignment="BOTTOM_CENTER"/>
