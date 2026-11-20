@@ -119,7 +119,7 @@
         <Label fx:id="lblWikipediaTitulo" text="Sin consulta" styleClass="page-title"/>
         <Label fx:id="lblWikipediaDescripcion" text="" wrapText="true"/>
         <Label fx:id="lblWikipediaExtracto"
-               text="Seleccione una planta para consultar informacion."
+               text="Seleccione una planta para consultar información."
                wrapText="true"/>
         <Hyperlink fx:id="lnkWikipedia"
                    text="Wikipedia"
