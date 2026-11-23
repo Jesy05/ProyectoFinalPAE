@@ -68,6 +68,12 @@
                         <fx:include source="riego-view.fxml"/>
                     </content>
                 </Tab>
+
+                <Tab text="Reportes">
+                    <content>
+                        <fx:include source="reporte-view.fxml"/>
+                    </content>
+                </Tab>
             </tabs>
 
         </TabPane>

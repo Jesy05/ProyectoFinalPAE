@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- Pestana Reportes: vista previa de JasperReports y exportacion a PDF y Excel -->
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ni.edu.uam.proyectofinalpae.controller.ReporteController"
+      styleClass="reportes-page"
+      spacing="12">
+
+    <Label text="Reportes" styleClass="page-title"/>
+    <Label text="Genere un reporte, revíselo aquí y expórtelo a PDF o a Excel."
+           styleClass="page-subtitle"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Reporte:" styleClass="field-label"/>
+        <ComboBox fx:id="cbReporte" prefWidth="280"/>
+        <Button fx:id="btnGenerar"
+                text="Generar reporte"
+                styleClass="btn-guardar"
+                onAction="#generar"
+                defaultButton="true"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnPdf"
+                text="Exportar PDF"
+                styleClass="btn-pdf"
+                onAction="#exportarPdf"/>
+        <Button fx:id="btnExcel"
+                text="Exportar Excel"
+                styleClass="btn-excel"
+                onAction="#exportarExcel"/>
+    </HBox>
+
+    <Label fx:id="lblEstado" styleClass="reporte-estado"/>
+
+    <!-- Vista previa: cada pagina del reporte se muestra como una hoja -->
+    <ScrollPane fx:id="scrollVista"
+                styleClass="reporte-vista"
+                fitToWidth="true"
+                VBox.vgrow="ALWAYS">
+        <VBox fx:id="contenedorPaginas"
+              alignment="TOP_CENTER"
+              spacing="18">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+        </VBox>
+    </ScrollPane>
+
+</VBox>
