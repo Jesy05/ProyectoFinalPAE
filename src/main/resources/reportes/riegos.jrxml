@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PlantBee: Historial de riego. Los datos llegan desde Hibernate (ReporteService). -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="riegos" pageWidth="842" pageHeight="595" orientation="Landscape"
+              whenNoDataType="AllSectionsNoDetail"
+              columnWidth="782" leftMargin="30" rightMargin="30" topMargin="25" bottomMargin="25">
+	<!-- Ajustes para que el Excel salga como una tabla limpia -->
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.show.gridlines" value="false"/>
+	<!-- Filas 1 a 4 (logo, titulo y encabezado de la tabla) quedan fijas al desplazarse -->
+	<property name="net.sf.jasperreports.export.xls.freeze.row" value="5"/>
+
+	<style name="base" isDefault="true" fontName="SansSerif" fontSize="9" forecolor="#254E06"/>
+	<style name="titulo" fontName="SansSerif" fontSize="17" isBold="true" forecolor="#004F2E" vTextAlign="Middle"/>
+	<style name="subtitulo" fontName="SansSerif" fontSize="9" forecolor="#657733" vTextAlign="Middle"/>
+	<style name="encabezado" mode="Opaque" backcolor="#004F2E" forecolor="#FFFFFF" fontName="SansSerif" fontSize="9" isBold="true" vTextAlign="Middle">
+		<box leftPadding="6" rightPadding="6">
+			<pen lineWidth="0.5" lineColor="#2F6B4B"/>
+		</box>
+	</style>
+	<style name="fila" mode="Opaque" backcolor="#FFFFFF" forecolor="#254E06" fontName="SansSerif" fontSize="9" vTextAlign="Middle">
+		<box topPadding="3" leftPadding="6" bottomPadding="3" rightPadding="6">
+			<pen lineWidth="0.5" lineColor="#D7E3A4"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#ECF5E2"/>
+		</conditionalStyle>
+	</style>
+	<style name="resumen" mode="Opaque" backcolor="#F5EAB9" forecolor="#004F2E" fontName="SansSerif" fontSize="10" isBold="true" vTextAlign="Middle">
+		<box leftPadding="8" rightPadding="8">
+			<pen lineWidth="0.5" lineColor="#EAD465"/>
+		</box>
+	</style>
+	<style name="pie" fontName="SansSerif" fontSize="8" forecolor="#657733" vTextAlign="Middle"/>
+	<parameter name="FECHA" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="RESUMEN_AGUA" class="java.lang.String"/>
+	<field name="fecha" class="java.util.Date"/>
+	<field name="planta" class="java.lang.String"/>
+	<field name="ubicacion" class="java.lang.String"/>
+	<field name="ml" class="java.lang.Integer"/>
+	<field name="origen" class="java.lang.String"/>
+	<field name="modo" class="java.lang.String"/>
+	<variable name="TOTAL_ML" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{ml}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<title>
+		<band height="66">
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="4" width="40" height="50"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement style="titulo" x="40" y="6" width="742" height="28"/>
+				<textElement>
+					<paragraph leftIndent="8"/>
+				</textElement>
+				<text><![CDATA[Historial de riego]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="subtitulo" x="40" y="34" width="742" height="18"/>
+				<textElement>
+					<paragraph leftIndent="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PlantBee · Huertos verticales modulares · Generado el " + $P{FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="26">
+		<staticText>
+			<reportElement style="encabezado" x="0" y="0" width="40" height="26">
+				<property name="net.sf.jasperreports.export.xls.auto.filter" value="Start"/>
+			</reportElement>
+			<textElement textAlignment="Center"/>
+			<text><![CDATA[N°]]></text>
+		</staticText>
+		<staticText>
+			<reportElement style="encabezado" x="40" y="0" width="110" height="26"></reportElement>
+			<textElement textAlignment="Left"/>
+			<text><![CDATA[Fecha]]></text>
+		</staticText>
+		<staticText>
+			<reportElement style="encabezado" x="150" y="0" width="150" height="26"></reportElement>
+			<textElement textAlignment="Left"/>
+			<text><![CDATA[Planta]]></text>
+		</staticText>
+		<staticText>
+			<reportElement style="encabezado" x="300" y="0" width="180" height="26"></reportElement>
+			<textElement textAlignment="Left"/>
+			<text><![CDATA[Ubicación]]></text>
+		</staticText>
+		<staticText>
+			<reportElement style="encabezado" x="480" y="0" width="82" height="26"></reportElement>
+			<textElement textAlignment="Right"/>
+			<text><![CDATA[Cantidad (ml)]]></text>
+		</staticText>
+		<staticText>
+			<reportElement style="encabezado" x="562" y="0" width="140" height="26"></reportElement>
+			<textElement textAlignment="Left"/>
+			<text><![CDATA[Origen del agua]]></text>
+		</staticText>
+		<staticText>
+			<reportElement style="encabezado" x="702" y="0" width="80" height="26">
+				<property name="net.sf.jasperreports.export.xls.auto.filter" value="End"/>
+			</reportElement>
+			<textElement textAlignment="Left"/>
+			<text><![CDATA[Modo]]></text>
+		</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+		<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<reportElement style="fila" stretchType="ContainerHeight" x="0" y="0" width="40" height="20"/>
+			<textElement textAlignment="Center"/>
+			<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+		</textField>
+		<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
+			<reportElement style="fila" stretchType="ContainerHeight" x="40" y="0" width="110" height="20"/>
+			<textElement textAlignment="Left"/>
+			<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+		</textField>
+		<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<reportElement style="fila" stretchType="ContainerHeight" x="150" y="0" width="150" height="20"/>
+			<textElement textAlignment="Left"/>
+			<textFieldExpression><![CDATA[$F{planta}]]></textFieldExpression>
+		</textField>
+		<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<reportElement style="fila" stretchType="ContainerHeight" x="300" y="0" width="180" height="20"/>
+			<textElement textAlignment="Left"/>
+			<textFieldExpression><![CDATA[$F{ubicacion}]]></textFieldExpression>
+		</textField>
+		<textField textAdjust="StretchHeight" pattern="#,##0" isBlankWhenNull="true">
+			<reportElement style="fila" stretchType="ContainerHeight" x="480" y="0" width="82" height="20"/>
+			<textElement textAlignment="Right"/>
+			<textFieldExpression><![CDATA[$F{ml}]]></textFieldExpression>
+		</textField>
+		<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<reportElement style="fila" stretchType="ContainerHeight" x="562" y="0" width="140" height="20"/>
+			<textElement textAlignment="Left"/>
+			<textFieldExpression><![CDATA[$F{origen}]]></textFieldExpression>
+		</textField>
+		<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<reportElement style="fila" stretchType="ContainerHeight" x="702" y="0" width="80" height="20"/>
+			<textElement textAlignment="Left"/>
+			<textFieldExpression><![CDATA[$F{modo}]]></textFieldExpression>
+		</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22">
+			<!-- El pie de pagina solo va en el PDF: en el Excel romperia las columnas de la tabla -->
+			<printWhenExpression><![CDATA[!Boolean.TRUE.equals($P{IS_IGNORE_PAGINATION})]]></printWhenExpression>
+			<staticText>
+				<reportElement style="pie" x="0" y="4" width="600" height="16"/>
+				<text><![CDATA[PlantBee · Gestión sostenible de huertos urbanos]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="pie" x="600" y="4" width="140" height="16"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="pie" x="740" y="4" width="42" height="16"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="36">
+			<textField>
+				<reportElement style="resumen" x="0" y="10" width="782" height="24"/>
+				<textFieldExpression><![CDATA["Total regado: " + new java.text.DecimalFormat("#,##0.00").format($V{TOTAL_ML} / 1000.0) + " L     ·     " + $P{RESUMEN_AGUA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
