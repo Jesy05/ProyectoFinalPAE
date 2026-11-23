@@ -1,5 +1,15 @@
 package ni.edu.uam.proyectofinalpae.model;
+
 import jakarta.persistence.*;
+import org.hibernate.Hibernate;
+
+/**
+ * Modulo hexagonal apilable de una colmena. Cada modulo es un nivel con espacio para varias macetas.
+ * Relaciones:
+ *  - Modulo (N) -> Colmena (1) con @ManyToOne + @JoinColumn: este lado es el DUENO de la relacion.
+ *  - Modulo (1) -> Planta (N), mapeada desde Planta.
+ * Una colmena no puede tener dos modulos con el mismo nivel (@UniqueConstraint).
+ */
 @Entity
 @Table(name = "modulo",
         uniqueConstraints = @UniqueConstraint(columnNames = {"colmena_id", "numero_nivel"}))
@@ -55,11 +65,15 @@ public class Modulo {
         this.colmena = colmena;
     }
 
-    /** Ej: "Balcon - Nivel 2". Requiere que la colmena venga cargado (JOIN FETCH). */
+    /**
+     * Ej: "Colmena del balcon - Nivel 2".
+     * La colmena es LAZY: si no vino cargada con JOIN FETCH no se toca, asi el toString nunca lanza
+     * LazyInitializationException. Tampoco recorre la lista de modulos de la colmena (evita bucles).
+     */
     @Override
     public String toString() {
-        return colmena.getNombre() + " - Nivel " + numeroNivel;
+        String nombreColmena = (colmena != null && Hibernate.isInitialized(colmena))
+                ? colmena.getNombre() : "Colmena";
+        return nombreColmena + " - Nivel " + numeroNivel;
     }
 }
-
-

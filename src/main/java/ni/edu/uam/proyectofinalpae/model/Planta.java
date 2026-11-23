@@ -1,6 +1,7 @@
 package ni.edu.uam.proyectofinalpae.model;
 
 import jakarta.persistence.*;
+import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 
@@ -36,6 +37,11 @@ public class Planta {
     @JoinColumn(name = "modulo_id", nullable = false)
     private Modulo modulo;
 
+    /*
+     * Relacion uno a uno: Sensor es el dueno (tiene planta_id UNIQUE) y aqui va mappedBy.
+     * cascade = ALL + orphanRemoval: el sensor esta instalado en la maceta y no existe sin su planta,
+     * asi que se guarda en el mismo persist de la planta y se borra junto con ella.
+     */
     @OneToOne(mappedBy = "planta", cascade = CascadeType.ALL, orphanRemoval = true)
     private Sensor sensor;
 
@@ -44,7 +50,11 @@ public class Planta {
 
     /** Nombre para mostrar: el apodo o, si no tiene, el nombre del cultivo. */
     public String getNombreVisible() {
-        return (apodo == null || apodo.isBlank()) ? cultivo.getNombre() : apodo;
+        if (apodo != null && !apodo.isBlank()) {
+            return apodo;
+        }
+        // El cultivo es LAZY: solo se lee si ya esta cargado (evita LazyInitializationException)
+        return (cultivo != null && Hibernate.isInitialized(cultivo)) ? cultivo.getNombre() : "Planta " + id;
     }
 
     public Long getId() {
@@ -106,6 +116,8 @@ public class Planta {
     /** Ej: "Albahaca (Balcon - Nivel 2)". Requiere cultivo, modulo y colmena cargados. */
     @Override
     public String toString() {
-        return getNombreVisible() + " (" + modulo + ")";
+        // El modulo tambien es LAZY: llamar toString sobre un proxy sin cargar lo intentaria cargar
+        String ubicacion = (modulo != null && Hibernate.isInitialized(modulo)) ? modulo.toString() : "Modulo";
+        return getNombreVisible() + " (" + ubicacion + ")";
     }
 }
