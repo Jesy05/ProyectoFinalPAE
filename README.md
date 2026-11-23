@@ -60,6 +60,25 @@ no se usa JDBC directo. Consultas HQL sobre entidades relacionadas:
 | `RiegoDao` | `litrosPorOrigen()` | `SUM` + `GROUP BY` del agua usada por origen (lluvia, gris filtrada, potable) |
 | `AlertaDao` | `listarPendientes()` / `generarAlertasHumedad()` | Alertas con planta y ubicacion; crea alertas con `NOT EXISTS` |
 
+## Reportes (JasperReports)
+
+La pestana **Reportes** genera tres reportes con JasperReports, los muestra dentro de la app
+(vista previa pagina por pagina) y los exporta a **PDF** y a **Excel (.xlsx)**.
+
+| Reporte | Plantilla | Contenido |
+|---|---|---|
+| Inventario de plantas y sensores | `reportes/plantas.jrxml` | Planta, cultivo, ubicacion, estado, humedad y si necesita riego |
+| Historial de riego | `reportes/riegos.jrxml` | Fecha, planta, cantidad y origen del agua, con litros por origen |
+| Alertas pendientes | `reportes/alertas.jrxml` | Alertas sin atender con su planta y mensaje |
+
+- Los datos se leen con **Hibernate** (los mismos DAO de las pantallas) y se pasan al reporte con
+  `JRMapCollectionDataSource`; no se usa JDBC directo.
+- `ReporteService` compila cada `.jrxml` una sola vez, llena el reporte y lo exporta.
+- La vista previa dibuja cada pagina como imagen (`JasperPrintManager.printPageToImage`) dentro de JavaFX.
+- El Excel sale como tabla: encabezado verde con filtros, encabezado fijo al desplazarse, filas
+  alternadas y numeros/fechas como celdas reales (no texto).
+- La generacion y la exportacion corren en segundo plano (`Task`) para no congelar la ventana.
+
 ## Instalacion
 
 1. Instale **JDK 21**, **IntelliJ IDEA** y **PostgreSQL** (con pgAdmin).

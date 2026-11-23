@@ -25,6 +25,7 @@ public final class Iconos {
             Map.entry("Colmenas", "mdi2h-hexagon-multiple"),
             Map.entry("Plantas", "mdi2s-sprout"),
             Map.entry("Riegos y alertas", "mdi2w-water"),
+            Map.entry("Reportes", "mdi2f-file-chart"),
             Map.entry("Inicio", "mdi2h-home"),
             // Botones CRUD
             Map.entry("Nuevo", "mdi2p-plus"),
@@ -40,7 +41,11 @@ public final class Iconos {
             Map.entry("Registrar riego", "mdi2w-weather-rainy"),
             Map.entry("Revisar sensores", "mdi2b-bell-ring"),
             Map.entry("Marcar como atendida", "mdi2c-check-circle"),
-            Map.entry("Consultar Wikipedia", "mdi2w-wikipedia")
+            Map.entry("Consultar Wikipedia", "mdi2w-wikipedia"),
+            // Reportes
+            Map.entry("Generar reporte", "mdi2f-file-eye"),
+            Map.entry("Exportar PDF", "mdi2f-file-pdf-box"),
+            Map.entry("Exportar Excel", "mdi2m-microsoft-excel")
     );
 
     private Iconos() {
