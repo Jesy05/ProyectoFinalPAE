@@ -52,6 +52,19 @@
             <version>${gson.version}</version>
         </dependency>
 
+        <!-- Reportes: JasperReports genera el PDF y el Excel -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>6.21.5</version>
+        </dependency>
+        <!-- Convierte las paginas del reporte en imagenes para verlas en JavaFX -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
         <!-- Iconos vectoriales (Material Design) para JavaFX -->
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
