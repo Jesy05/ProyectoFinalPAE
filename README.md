@@ -44,6 +44,37 @@ Usuario 1 ──── N Colmena 1 ──── N Modulo 1 ──── N Planta
 | `Riego` | `riego` | `@ManyToOne` Planta |
 | `Alerta` | `alerta` | `@ManyToOne` Planta |
 
+## Decisiones de diseno
+
+### Relaciones y por que cada cascade
+
+| Relacion | Tipo | Dueno (llave foranea) | Cascade | Por que |
+|---|---|---|---|---|
+| Colmena - Modulo | 1:N **bidireccional** | `Modulo` (`@JoinColumn colmena_id`); `Colmena` usa `mappedBy` | `ALL` + `orphanRemoval` | Un modulo es una pieza fisica de la colmena y no existe sin ella: se guarda y se borra con su colmena. Si se quita de la lista (`quitarModulo`) se borra. |
+| Planta - Sensor | 1:1 bidireccional | `Sensor` (`planta_id` **unico**); `Planta` usa `mappedBy` | `ALL` + `orphanRemoval` | El sensor esta instalado en la maceta: se crea en el mismo `persist` de la planta y se elimina con ella. |
+| Usuario - Colmena | N:1 | `Colmena` (`usuario_id`) | Ninguno | Un usuario existe por si mismo; borrarlo no debe borrar colmenas en cadena. PostgreSQL impide borrarlo si tiene colmenas. |
+| Planta - Cultivo | N:1 | `Planta` (`cultivo_id`) | Ninguno | El cultivo es un catalogo compartido por muchas plantas. |
+| Planta - Modulo | N:1 | `Planta` (`modulo_id`) | Ninguno | Una planta se mueve o se borra sin afectar al modulo. |
+| Riego / Alerta - Planta | N:1 | `Riego`, `Alerta` (`planta_id`) | Ninguno | Son historial: no se pierden por accidente; la base impide borrar una planta con riegos o alertas. |
+
+- **Metodos de ayuda:** `Colmena.agregarModulo()` / `quitarModulo()` y `Planta.setSensor()` actualizan
+  los dos lados de la relacion a la vez. `getModulos()` devuelve una lista de solo lectura para obligar a
+  usar esos metodos.
+- **`mappedBy` en el lado inverso** evita que Hibernate cree una tabla intermedia innecesaria.
+
+### Otras decisiones
+
+- **`FetchType.LAZY` + `JOIN FETCH`:** ninguna relacion es EAGER. Cada consulta HQL trae con `JOIN FETCH`
+  solo lo que la pantalla necesita, y la sesion se cierra en el DAO.
+- **`toString` seguro:** `Modulo` y `Planta` revisan `Hibernate.isInitialized(...)` antes de leer una
+  relacion LAZY, asi nunca lanzan `LazyInitializationException` y no recorren colecciones (sin bucles).
+- **Un solo `SessionFactory`** en `HibernateUtil` y un `GenericDao<T>` con el CRUD y las transacciones
+  (commit y rollback) que heredan todos los DAO.
+- **Credenciales fuera del repositorio:** `db.properties` esta en `.gitignore`; se sube solo
+  `db.properties.example`.
+- **La API propia publica mapas planos**, no las entidades, para no exponer de mas ni entrar en ciclos
+  (Planta -> Sensor -> Planta) al convertir a JSON.
+
 ## Operaciones CRUD y consultas HQL
 
 El CRUD se hace solo con Hibernate (`persist`, `merge`, `find`, `remove`) desde `dao/GenericDao.java`;
