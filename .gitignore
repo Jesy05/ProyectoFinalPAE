@@ -40,4 +40,5 @@ build/
 .DS_Store
 ### Credenciales locales (NO subir) ###
 src/main/resources/db.properties
+/db.properties
 *.log
