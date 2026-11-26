@@ -4,6 +4,11 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,14 +26,17 @@ import ni.edu.uam.proyectofinalpae.model.Alerta;
 import ni.edu.uam.proyectofinalpae.model.Colmena;
 import ni.edu.uam.proyectofinalpae.model.Planta;
 import ni.edu.uam.proyectofinalpae.model.Riego;
+import ni.edu.uam.proyectofinalpae.service.CalendarioCuidadosService;
 
 public class ApiRutas implements HttpHandler {
+    private static final System.Logger LOG = System.getLogger(ApiRutas.class.getName());
     private final UsuarioDao usuarioDao = new UsuarioDao();
     private final CultivoDao cultivoDao = new CultivoDao();
     private final ColmenaDao colmenaDao = new ColmenaDao();
     private final PlantaDao plantaDao = new PlantaDao();
     private final RiegoDao riegoDao = new RiegoDao();
     private final AlertaDao alertaDao = new AlertaDao();
+    private final CalendarioCuidadosService cuidados = new CalendarioCuidadosService();
 
     @Override
     public void handle(HttpExchange intercambio) throws IOException {
@@ -54,13 +62,64 @@ public class ApiRutas implements HttpHandler {
                         JsonUtil.aJson(riegos()));
                 case "/api/alertas" -> ApiServidor.responder(intercambio, 200,
                         JsonUtil.aJson(alertas()));
+                case "/api/cuidados" -> responderCuidados(intercambio);
                 default -> ApiServidor.responder(intercambio, 404,
                         JsonUtil.aJson(Map.of("error", "Ruta no encontrada: " + ruta)));
             }
         } catch (RuntimeException e) {
+            LOG.log(System.Logger.Level.ERROR, "Error al procesar una ruta de PlantBee: {0}",
+                    e.getClass().getSimpleName());
             ApiServidor.responder(intercambio, 500, JsonUtil.aJson(
-                    Map.of("error", "Error interno", "detalle", String.valueOf(e.getMessage()))));
+                    Map.of("error", "Error interno")));
         }
+    }
+
+    private void responderCuidados(HttpExchange intercambio) throws IOException {
+        LocalDate fecha = null;
+        YearMonth mes = null;
+        Long plantaId = null;
+        String consulta = intercambio.getRequestURI().getRawQuery();
+        try {
+            if (consulta != null && !consulta.isEmpty()) {
+                for (String parametro : consulta.split("&", -1)) {
+                    String[] partes = parametro.split("=", 2);
+                    if (partes.length != 2) {
+                        throw new IllegalArgumentException();
+                    }
+                    String clave = URLDecoder.decode(partes[0], StandardCharsets.UTF_8);
+                    String valor = URLDecoder.decode(partes[1], StandardCharsets.UTF_8);
+                    if ("fecha".equals(clave) && fecha == null && valor.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+                        fecha = LocalDate.parse(valor);
+                        if (fecha.getYear() == 0) {
+                            throw new IllegalArgumentException();
+                        }
+                    } else if ("mes".equals(clave) && mes == null && valor.matches("[0-9]{4}-[0-9]{2}")) {
+                        mes = YearMonth.parse(valor);
+                        if (mes.getYear() == 0) {
+                            throw new IllegalArgumentException();
+                        }
+                    } else if ("plantaId".equals(clave) && plantaId == null && valor.matches("[0-9]+")) {
+                        plantaId = Long.valueOf(valor);
+                        if (plantaId <= 0) {
+                            throw new IllegalArgumentException();
+                        }
+                    } else {
+                        throw new IllegalArgumentException();
+                    }
+                }
+            }
+            if (mes != null && (fecha != null || plantaId != null)) {
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException | DateTimeParseException e) {
+            ApiServidor.responder(intercambio, 400,
+                    JsonUtil.aJson(Map.of("error",
+                            "Use mes en formato AAAA-MM sin otros filtros, o fecha AAAA-MM-DD y plantaId positivo.")));
+            return;
+        }
+        var actividades = mes != null ? cuidados.paraMes(mes)
+                : fecha == null ? cuidados.proximos(plantaId) : cuidados.paraFecha(fecha, plantaId);
+        ApiServidor.responder(intercambio, 200, JsonUtil.aJson(actividades));
     }
 
     private List<Map<String, Object>> usuarios() {
@@ -68,9 +127,9 @@ public class ApiRutas implements HttpHandler {
         for (Usuario u : usuarioDao.listar()) {
             Map<String, Object> fila = new LinkedHashMap<>();
             fila.put("id", u.getId());
-            fila.put("nombre", u.getNombre());
-            fila.put("correo", u.getCorreo());
-            fila.put("telefono", u.getTelefono());
+
+
+
             fila.put("fechaRegistro", String.valueOf(u.getFechaRegistro()));
             filas.add(fila);
         }
@@ -99,7 +158,7 @@ public class ApiRutas implements HttpHandler {
             fila.put("id", c.getId());
             fila.put("nombre", c.getNombre());
             fila.put("ubicacion", c.getUbicacion());
-            fila.put("dueno", c.getUsuario().getNombre());
+            fila.put("usuarioId", c.getUsuario().getId());
             fila.put("fechaInstalacion", String.valueOf(c.getFechaInstalacion()));
             fila.put("modulos", c.getModulos().size());
             filas.add(fila);
@@ -154,6 +213,10 @@ public class ApiRutas implements HttpHandler {
             fila.put("planta", a.getPlanta().getNombreVisible());
             fila.put("ubicacion", a.getPlanta().getModulo().toString());
             fila.put("tipo", a.getTipo());
+            fila.put("plantaId", a.getPlanta().getId());
+            var sensor = a.getPlanta().getSensor();
+            fila.put("humedadActual", sensor == null ? null : sensor.getHumedadActual());
+            fila.put("humedadMinima", a.getPlanta().getCultivo().getHumedadMinima());
             fila.put("mensaje", a.getMensaje());
             fila.put("fechaHora", String.valueOf(a.getFechaHora()));
             filas.add(fila);

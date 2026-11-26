@@ -14,20 +14,24 @@
     <HBox spacing="8" alignment="CENTER_LEFT">
 
         <ComboBox fx:id="cbPlanta"
-                  prefWidth="260"
+                  prefWidth="215"
                   promptText="Planta"/>
 
         <TextField fx:id="txtCantidad"
-                   prefWidth="80"
+                   prefWidth="70"
                    promptText="ml"/>
 
         <Label text="ml" minWidth="-Infinity"/>
 
         <ComboBox fx:id="cbOrigen"
-                  prefWidth="240"/>
+                  prefWidth="220"/>
 
         <ComboBox fx:id="cbModo"
-                  prefWidth="140"/>
+                  prefWidth="130"/>
+
+        <Button text="Ver calendario"
+                styleClass="btn-atendida"
+                onAction="#verCalendario"/>
 
     </HBox>
 

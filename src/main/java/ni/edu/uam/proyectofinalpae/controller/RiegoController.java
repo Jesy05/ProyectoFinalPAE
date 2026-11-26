@@ -2,6 +2,7 @@ package ni.edu.uam.proyectofinalpae.controller;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -41,6 +42,7 @@ public class RiegoController {
     private final RiegoDao riegoDao = new RiegoDao();
     private final AlertaDao alertaDao = new AlertaDao();
     private final PlantaDao plantaDao = new PlantaDao();
+    private CalendarioCuidadosVentana calendario;
 
     @FXML
     public void initialize() {
@@ -55,25 +57,42 @@ public class RiegoController {
         colAFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFechaHora().format(FORMATO)));
         colAPlanta.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPlanta().toString()));
         colATipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        colAMensaje.setCellValueFactory(new PropertyValueFactory<>("mensaje"));
+        colAMensaje.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMensajeVigente()));
         limpiar();
-        recargar();
+        CambiosCuidados.observar(tblAlertas, this::recargar);
+    }
+
+    @FXML
+    private void verCalendario() {
+        if (calendario == null) {
+            calendario = new CalendarioCuidadosVentana(cbModo.getScene().getWindow());
+        }
+        calendario.mostrar();
     }
 
     @FXML
     private void recargar() {
         try {
+            Planta seleccionada = cbPlanta.getValue();
             cbPlanta.setItems(FXCollections.observableArrayList(plantaDao.listar()));
+            if (seleccionada != null) {
+                cbPlanta.getItems().stream().filter(p -> p.getId().equals(seleccionada.getId()))
+                        .findFirst().ifPresent(cbPlanta::setValue);
+            }
             tblRiegos.setItems(FXCollections.observableArrayList(riegoDao.listar()));
-            tblAlertas.setItems(FXCollections.observableArrayList(alertaDao.listarPendientes()));
+            recargarAlertas();
             actualizarResumenAgua();
         } catch (Exception e) {
             Mensajes.error("No se pudieron cargar riegos y alertas.", e);
         }
     }
 
+    private void recargarAlertas() {
+        tblAlertas.setItems(FXCollections.observableArrayList(alertaDao.listarPendientes()));
+    }
+
     @FXML
-    private void registrarRiego() {
+    private void registrarRiego(ActionEvent evento) {
         try {
             Planta planta = cbPlanta.getValue();
             if (planta == null) throw new IllegalArgumentException("Seleccione la planta que se rego.");
@@ -93,12 +112,13 @@ public class RiegoController {
             riego.setOrigenAgua(cbOrigen.getValue());
             riego.setModo(cbModo.getValue());
             riego.setFechaHora(LocalDateTime.now());
-            riegoDao.registrar(riego);
-
-            Mensajes.info("Riego registrado. La humedad de " + planta.getNombreVisible()
-                    + " se restablecio y sus alertas quedaron atendidas.");
-            limpiar();
-            recargar();
+            CambiosCuidados.ejecutar((Button) evento.getSource(), () -> {
+                riegoDao.registrar(riego);
+                return planta.getNombreVisible();
+            }, nombre -> {
+                limpiar();
+                Mensajes.info("Riego registrado para " + nombre + ".");
+            }, "No se pudo registrar el riego.");
         } catch (IllegalArgumentException e) {
             Mensajes.advertencia(e.getMessage());
         } catch (Exception e) {
@@ -116,24 +136,20 @@ public class RiegoController {
         if (!Mensajes.confirmar("Eliminar este registro de riego?")) return;
         try {
             riegoDao.eliminar(riego.getId());
-            recargar();
+            CambiosCuidados.notificar();
         } catch (Exception e) {
             Mensajes.error("No se pudo eliminar el riego.", e);
         }
     }
 
-    /** Revisa los sensores (HQL) y crea alertas para las plantas con humedad baja. */
+    /** Concilia las alertas con las lecturas actuales. */
     @FXML
-    private void revisarSensores() {
-        try {
-            int nuevas = alertaDao.generarAlertasHumedad();
-            recargar();
-            Mensajes.info(nuevas == 0
-                    ? "Todas las plantas tienen buena humedad (o ya tienen alerta pendiente)."
-                    : "Se generaron " + nuevas + " alertas nuevas de humedad baja.");
-        } catch (Exception e) {
-            Mensajes.error("No se pudieron revisar los sensores.", e);
-        }
+    private void revisarSensores(ActionEvent evento) {
+        CambiosCuidados.ejecutar((Button) evento.getSource(), alertaDao::generarAlertasHumedad,
+                nuevas -> Mensajes.info(nuevas == 0
+                        ? "Revisión completada. No se generaron alertas nuevas."
+                        : "Se generaron " + nuevas + " alertas nuevas de humedad baja."),
+                "No se pudieron revisar los sensores.");
     }
 
     @FXML
@@ -145,7 +161,7 @@ public class RiegoController {
         }
         try {
             alertaDao.marcarAtendida(alerta.getId());
-            recargar();
+            CambiosCuidados.notificar();
         } catch (Exception e) {
             Mensajes.error("No se pudo actualizar la alerta.", e);
         }
@@ -161,7 +177,7 @@ public class RiegoController {
         if (!Mensajes.confirmar("Eliminar esta alerta?")) return;
         try {
             alertaDao.eliminar(alerta.getId());
-            recargar();
+            CambiosCuidados.notificar();
         } catch (Exception e) {
             Mensajes.error("No se pudo eliminar la alerta.", e);
         }

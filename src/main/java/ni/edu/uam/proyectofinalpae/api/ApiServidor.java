@@ -20,11 +20,11 @@ public class ApiServidor {
             return;
         }
         try {
-            servidor = HttpServer.create(new InetSocketAddress(PUERTO), 0);
+            servidor = HttpServer.create(new InetSocketAddress("127.0.0.1", PUERTO), 0);
             servidor.createContext("/api", new ApiRutas());
             servidor.setExecutor(Executors.newFixedThreadPool(4));
             servidor.start();
-            System.out.println("API PlantBee en http://localhost:" + PUERTO + "/api/health");
+            System.out.println("API PlantBee en http://127.0.0.1:" + PUERTO + "/api/health");
         } catch (IOException e) {
             servidor = null;
             System.out.println("La API no se inicio porque el puerto " + PUERTO

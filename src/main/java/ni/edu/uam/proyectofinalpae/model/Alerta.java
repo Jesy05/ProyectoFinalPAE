@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "alerta")
 public class Alerta {
 
+    public static final String HUMEDAD_BAJA = "Humedad baja";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -63,6 +65,19 @@ public class Alerta {
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
+    }
+
+    /** Texto para vistas actuales. El mensaje persistido documenta la lectura original. */
+    public String getMensajeVigente() {
+        if (!HUMEDAD_BAJA.equals(tipo)) return mensaje;
+        Sensor sensor = planta.getSensor();
+        if (sensor == null || sensor.getHumedadActual() == null) {
+            return "Lectura de humedad no disponible.";
+        }
+        int minima = planta.getCultivo().getHumedadMinima();
+        String lectura = planta.getNombreVisible() + " tiene " + sensor.getHumedadActual()
+                + " % de humedad (mínimo " + minima + " %).";
+        return sensor.necesitaRiego() ? lectura + " Necesita riego." : lectura;
     }
 
     public boolean isAtendida() {
