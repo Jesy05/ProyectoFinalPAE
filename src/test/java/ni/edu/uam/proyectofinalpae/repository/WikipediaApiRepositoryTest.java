@@ -9,6 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WikipediaApiRepositoryTest {
     @Test
+    void rechazaResumenAusenteYDescartaEnlacesAjenos() throws Exception {
+        var incompleto = new WikipediaApiRepository(uri -> "{}");
+        org.junit.jupiter.api.Assertions.assertThrows(java.io.IOException.class,
+                () -> incompleto.buscarResumen("Albahaca"));
+        var enlaceAjeno = new WikipediaApiRepository(uri -> """
+                {"extract":"Resumen","content_urls":{"desktop":{"page":"https://ejemplo.invalid/articulo"}}}
+                """);
+        org.junit.jupiter.api.Assertions.assertEquals("", enlaceAjeno.buscarResumen("Albahaca").pageUrl());
+    }
+
+    @Test
     void parseaResumenCompletoSinInternet() throws Exception {
         WikipediaApiRepository repository = new WikipediaApiRepository(uri -> {
             assertTrue(uri.toString().contains("wikipedia.org"));

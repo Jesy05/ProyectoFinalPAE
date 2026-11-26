@@ -37,7 +37,7 @@ public class HttpClientGateway implements HttpGateway {
         HttpResponse<String> response = client.send(
                 request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
-            throw new IOException("HTTP status " + response.statusCode());
+            throw new HttpStatusException(response.statusCode());
         }
         return response.body();
     }

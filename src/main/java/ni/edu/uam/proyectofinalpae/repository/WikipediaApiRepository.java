@@ -1,5 +1,6 @@
 package ni.edu.uam.proyectofinalpae.repository;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonParseException;
@@ -41,7 +42,10 @@ public class WikipediaApiRepository implements WikipediaRepository {
             JsonObject json = JsonParser.parseString(body).getAsJsonObject();
             String title = texto(json, "title", texto);
             String description = texto(json, "description", "Sin descripcion disponible.");
-            String extract = texto(json, "extract", "No hay resumen disponible.");
+            String extract = texto(json, "extract", "");
+            if (extract.isBlank()) {
+                throw new IOException("Wikipedia no devolvió un resumen utilizable.");
+            }
             String pageUrl = "";
 
             if (json.has("content_urls") && json.get("content_urls").isJsonObject()) {
@@ -50,16 +54,31 @@ public class WikipediaApiRepository implements WikipediaRepository {
                     pageUrl = texto(urls.getAsJsonObject("desktop"), "page", "");
                 }
             }
-            return new WikipediaSummary(title, description, extract, pageUrl);
+            return new WikipediaSummary(title, description, extract, enlaceSeguro(pageUrl));
         } catch (JsonParseException | IllegalStateException | NullPointerException ex) {
             throw new IOException("La respuesta de Wikipedia no tiene un formato valido.", ex);
         }
     }
 
     private static String texto(JsonObject object, String key, String fallback) {
-        if (!object.has(key) || object.get(key).isJsonNull()) {
+        JsonElement valor = object.get(key);
+        if (valor == null || !valor.isJsonPrimitive() || !valor.getAsJsonPrimitive().isString()
+                || valor.getAsString().isBlank()) {
             return fallback;
         }
-        return object.get(key).getAsString();
+        return valor.getAsString();
+    }
+
+    private static String enlaceSeguro(String url) {
+        try {
+            URI uri = URI.create(url);
+            if ("https".equalsIgnoreCase(uri.getScheme()) && "es.wikipedia.org".equalsIgnoreCase(uri.getHost())
+                    && uri.getRawUserInfo() == null && (uri.getPort() == -1 || uri.getPort() == 443)) {
+                return url;
+            }
+        } catch (IllegalArgumentException ignorado) {
+            // Una ficha puede mostrarse sin enlace.
+        }
+        return "";
     }
 }

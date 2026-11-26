@@ -21,6 +21,7 @@ import ni.edu.uam.proyectofinalpae.model.Riego;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -79,23 +80,39 @@ public class ReporteService {
      * @param paraExcel true = una sola pagina larga (sin cortes), que es lo que necesita el Excel
      */
     public JasperPrint generar(TipoReporte tipo, boolean paraExcel) throws JRException {
-        Map<String, Object> parametros = new HashMap<>();
-        parametros.put("FECHA", LocalDateTime.now().format(FORMATO_FECHA));
-        parametros.put("LOGO", logo());
-        if (paraExcel) {
-            parametros.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
-        }
+        return generar(preparar(tipo), paraExcel);
+    }
 
+    public DatosReporte preparar(TipoReporte tipo) {
+        String fecha = LocalDateTime.now().format(FORMATO_FECHA);
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("FECHA", fecha);
         List<Map<String, ?>> filas = switch (tipo) {
             case PLANTAS -> filasPlantas();
             case RIEGOS -> {
-                parametros.put("RESUMEN_AGUA", resumenAgua());
-                yield filasRiegos();
+                var riegos = riegoDao.listar();
+                parametros.put("RESUMEN_AGUA", resumenAgua(riegos));
+                yield filasRiegos(riegos);
             }
             case ALERTAS -> filasAlertas();
         };
-        return JasperFillManager.fillReport(compilar(tipo), parametros, new JRMapCollectionDataSource(filas));
+        return new DatosReporte(tipo, Map.copyOf(parametros), List.copyOf(filas));
     }
+
+    public JasperPrint generar(DatosReporte datos, boolean paraExcel) throws JRException {
+        var parametros = new HashMap<>(datos.parametros());
+        if (paraExcel) {
+            parametros.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
+        }
+        try (InputStream imagen = logo()) {
+            parametros.put("LOGO", imagen);
+            return JasperFillManager.fillReport(compilar(datos.tipo()), parametros, new JRMapCollectionDataSource(datos.filas()));
+        } catch (IOException e) {
+            throw new JRException("No se pudo cerrar el recurso del logo.", e);
+        }
+    }
+
+    public record DatosReporte(TipoReporte tipo, Map<String, Object> parametros, List<Map<String, ?>> filas) {}
 
     /** Guarda el reporte ya generado como PDF. */
     public void exportarPdf(JasperPrint reporte, File destino) throws JRException {
@@ -107,11 +124,15 @@ public class ReporteService {
      * filtros en el encabezado, encabezado fijo al desplazarse y numeros/fechas como celdas reales.
      */
     public void exportarExcel(TipoReporte tipo, File destino) throws JRException {
-        JasperPrint reporte = generar(tipo, true);
+        exportarExcel(preparar(tipo), destino);
+    }
+
+    public void exportarExcel(DatosReporte datos, File destino) throws JRException {
+        JasperPrint reporte = generar(datos, true);
 
         SimpleXlsxReportConfiguration configuracion = new SimpleXlsxReportConfiguration();
         configuracion.setOnePagePerSheet(false);
-        configuracion.setSheetNames(new String[]{tipo.hoja});
+        configuracion.setSheetNames(new String[]{datos.tipo().hoja});
         configuracion.setDetectCellType(true);
         configuracion.setRemoveEmptySpaceBetweenRows(true);
         configuracion.setRemoveEmptySpaceBetweenColumns(true);
@@ -125,16 +146,17 @@ public class ReporteService {
         exportador.exportReport();
     }
 
-    private JasperReport compilar(TipoReporte tipo) throws JRException {
+    private synchronized JasperReport compilar(TipoReporte tipo) throws JRException {
         JasperReport reporte = compilados.get(tipo);
         if (reporte == null) {
             String ruta = "/reportes/" + tipo.getArchivo() + ".jrxml";
-            InputStream plantilla = ReporteService.class.getResourceAsStream(ruta);
-            if (plantilla == null) {
-                throw new IllegalStateException("No se encontro la plantilla " + ruta);
+            try (InputStream plantilla = ReporteService.class.getResourceAsStream(ruta)) {
+                if (plantilla == null) throw new JRException("No se encontró la plantilla " + ruta);
+                reporte = JasperCompileManager.compileReport(plantilla);
+                compilados.put(tipo, reporte);
+            } catch (IOException e) {
+                throw new JRException("No se pudo cerrar la plantilla " + ruta, e);
             }
-            reporte = JasperCompileManager.compileReport(plantilla);
-            compilados.put(tipo, reporte);
         }
         return reporte;
     }
@@ -156,15 +178,16 @@ public class ReporteService {
             fila.put("estado", p.getEstado());
             fila.put("humedad", p.getSensor() == null ? null : p.getSensor().getHumedadActual());
             fila.put("minima", p.getCultivo().getHumedadMinima());
-            fila.put("regar", p.getSensor() != null && p.getSensor().necesitaRiego() ? "Sí" : "No");
+            fila.put("regar", p.getSensor() == null || p.getSensor().getHumedadActual() == null
+                    ? "Sin lectura" : p.getSensor().necesitaRiego() ? "Sí" : "No");
             filas.add(fila);
         }
         return filas;
     }
 
-    private List<Map<String, ?>> filasRiegos() {
+    private List<Map<String, ?>> filasRiegos(List<Riego> riegos) {
         List<Map<String, ?>> filas = new ArrayList<>();
-        for (Riego r : riegoDao.listar()) {
+        for (Riego r : riegos) {
             Map<String, Object> fila = new LinkedHashMap<>();
             fila.put("fecha", Timestamp.valueOf(r.getFechaHora()));
             fila.put("planta", r.getPlanta().getNombreVisible());
@@ -185,26 +208,21 @@ public class ReporteService {
             fila.put("planta", a.getPlanta().getNombreVisible());
             fila.put("ubicacion", a.getPlanta().getModulo().toString());
             fila.put("tipo", a.getTipo());
-            fila.put("mensaje", a.getMensaje());
+            fila.put("mensaje", a.getMensajeVigente());
             filas.add(fila);
         }
         return filas;
     }
 
-    /** Texto con los litros por origen de agua (consulta HQL con SUM y GROUP BY). */
-    private String resumenAgua() {
-        List<Object[]> litros = riegoDao.litrosPorOrigen();
-        if (litros.isEmpty()) {
-            return "Sin riegos registrados";
+    /** Usa las mismas filas del reporte para que el total corresponda al detalle. */
+    private String resumenAgua(List<Riego> riegos) {
+        if (riegos.isEmpty()) return "Sin riegos registrados";
+        var porOrigen = new java.util.TreeMap<String, Long>();
+        for (Riego riego : riegos) {
+            porOrigen.merge(riego.getOrigenAgua(), (long) riego.getCantidadMl(), Long::sum);
         }
-        StringBuilder texto = new StringBuilder();
-        for (Object[] fila : litros) {
-            if (!texto.isEmpty()) {
-                texto.append("   ·   ");
-            }
-            texto.append(fila[0]).append(": ")
-                    .append(String.format("%.2f L", ((Number) fila[1]).doubleValue()));
-        }
-        return texto.toString();
+        return porOrigen.entrySet().stream()
+                .map(fila -> fila.getKey() + ": " + String.format("%.2f L", fila.getValue() / 1000.0))
+                .collect(java.util.stream.Collectors.joining("   ·   "));
     }
 }

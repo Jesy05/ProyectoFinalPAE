@@ -16,6 +16,7 @@ import javafx.stage.FileChooser;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
 import ni.edu.uam.proyectofinalpae.service.ReporteService;
+import ni.edu.uam.proyectofinalpae.service.ReporteService.DatosReporte;
 import ni.edu.uam.proyectofinalpae.service.ReporteService.TipoReporte;
 import ni.edu.uam.proyectofinalpae.util.Mensajes;
 
@@ -46,7 +47,8 @@ public class ReporteController {
 
     /** Reporte que se esta viendo; el PDF se exporta exactamente igual a la vista previa. */
     private JasperPrint reporteActual;
-    private TipoReporte tipoActual;
+    private DatosReporte datosActuales;
+    private long versionReporte;
 
     @FXML
     public void initialize() {
@@ -55,6 +57,7 @@ public class ReporteController {
         btnPdf.setDisable(true);
         btnExcel.setDisable(true);
         mostrarMensaje("Elija un reporte y presione Generar reporte para ver la vista previa.");
+        CambiosCuidados.observar(contenedorPaginas, this::comprobarVigencia);
     }
 
     /** Genera el reporte en segundo plano (no congela la ventana) y muestra sus paginas. */
@@ -65,25 +68,32 @@ public class ReporteController {
             Mensajes.advertencia("Seleccione un reporte.");
             return;
         }
+        long version = CambiosCuidados.version().get();
         ocupado(true, "Generando " + tipo + "...");
 
         Task<VistaPrevia> tarea = new Task<>() {
             @Override
             protected VistaPrevia call() throws Exception {
-                JasperPrint reporte = reporteService.generar(tipo, false);
+                DatosReporte datos = reporteService.preparar(tipo);
+                JasperPrint reporte = reporteService.generar(datos, false);
                 List<Image> paginas = new ArrayList<>();
                 for (int i = 0; i < reporte.getPages().size(); i++) {
                     BufferedImage imagen = (BufferedImage) JasperPrintManager.printPageToImage(reporte, i, ZOOM);
                     paginas.add(SwingFXUtils.toFXImage(imagen, null));
                 }
-                return new VistaPrevia(reporte, paginas);
+                return new VistaPrevia(datos, reporte, paginas);
             }
         };
 
         tarea.setOnSucceeded(e -> {
             VistaPrevia vista = tarea.getValue();
             reporteActual = vista.reporte();
-            tipoActual = tipo;
+            datosActuales = vista.datos();
+            versionReporte = version;
+            if (comprobarVigencia()) {
+                ocupado(false, lblEstado.getText());
+                return;
+            }
             mostrarPaginas(vista.paginas());
             int total = vista.paginas().size();
             ocupado(false, tipo + " · " + total + (total == 1 ? " página" : " páginas"));
@@ -95,11 +105,23 @@ public class ReporteController {
         iniciar(tarea, "plantbee-reporte");
     }
 
+    private boolean comprobarVigencia() {
+        if (reporteActual == null || versionReporte == CambiosCuidados.version().get()) return false;
+        reporteActual = null;
+        datosActuales = null;
+        String estado = "Los datos cambiaron. Genere de nuevo el reporte para actualizarlo.";
+        mostrarMensaje(estado);
+        lblEstado.setText(estado);
+        btnPdf.setDisable(true);
+        btnExcel.setDisable(true);
+        return true;
+    }
+
     @FXML
     private void exportarPdf() {
-        if (reporteActual == null) return;
+        if (reporteActual == null || comprobarVigencia()) return;
         File destino = elegirArchivo("PDF", "*.pdf", ".pdf");
-        if (destino == null) return;
+        if (destino == null || reporteActual == null || comprobarVigencia()) return;
 
         JasperPrint reporte = reporteActual;
         ocupado(true, "Exportando PDF...");
@@ -124,16 +146,16 @@ public class ReporteController {
 
     @FXML
     private void exportarExcel() {
-        if (tipoActual == null) return;
+        if (datosActuales == null || comprobarVigencia()) return;
         File destino = elegirArchivo("Excel", "*.xlsx", ".xlsx");
-        if (destino == null) return;
+        if (destino == null || reporteActual == null || comprobarVigencia()) return;
 
-        TipoReporte tipo = tipoActual;
+        DatosReporte datos = datosActuales;
         ocupado(true, "Exportando Excel...");
         Task<Void> tarea = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                reporteService.exportarExcel(tipo, destino);
+                reporteService.exportarExcel(datos, destino);
                 return null;
             }
         };
@@ -177,7 +199,7 @@ public class ReporteController {
         FileChooser selector = new FileChooser();
         selector.setTitle("Guardar reporte como " + tipoArchivo);
         selector.getExtensionFilters().add(new FileChooser.ExtensionFilter(tipoArchivo, patron));
-        selector.setInitialFileName("plantbee-" + tipoActual.getArchivo() + "-" + LocalDate.now() + extension);
+        selector.setInitialFileName("plantbee-" + datosActuales.tipo().getArchivo() + "-" + LocalDate.now() + extension);
         File archivo = selector.showSaveDialog(btnGenerar.getScene().getWindow());
         if (archivo != null && !archivo.getName().toLowerCase().endsWith(extension)) {
             archivo = new File(archivo.getParentFile(), archivo.getName() + extension);
@@ -189,7 +211,7 @@ public class ReporteController {
         btnGenerar.setDisable(ocupado);
         cbReporte.setDisable(ocupado);
         btnPdf.setDisable(ocupado || reporteActual == null);
-        btnExcel.setDisable(ocupado || tipoActual == null);
+        btnExcel.setDisable(ocupado || datosActuales == null);
         lblEstado.setText(estado);
     }
 
@@ -204,6 +226,6 @@ public class ReporteController {
     }
 
     /** Resultado de generar: el reporte lleno y sus paginas ya dibujadas como imagenes. */
-    private record VistaPrevia(JasperPrint reporte, List<Image> paginas) {
+    private record VistaPrevia(DatosReporte datos, JasperPrint reporte, List<Image> paginas) {
     }
 }

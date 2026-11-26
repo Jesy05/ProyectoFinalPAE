@@ -1,0 +1,139 @@
+.calendario-cuidados {
+    -fx-background-color: #ECF5E2;
+    -fx-padding: 16;
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+    -fx-focus-color: #004F2E;
+    -fx-faint-focus-color: transparent;
+}
+
+.calendario-titulo {
+    -fx-background-color: #004F2E;
+    -fx-background-radius: 14;
+    -fx-padding: 10 14;
+    -fx-graphic-text-gap: 10;
+    -fx-text-fill: #F5EAB9;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.calendario-icono { -fx-icon-color: #EAD465; }
+
+.calendario-panel {
+    -fx-background-color: #F7F8EC;
+    -fx-background-radius: 14;
+    -fx-border-color: #D7E3A4;
+    -fx-border-radius: 14;
+    -fx-padding: 10 12;
+}
+
+.calendario-cuidados .button {
+    -fx-background-color: #FFFDF1;
+    -fx-text-fill: #254E06;
+    -fx-font-weight: bold;
+    -fx-border-color: #D7E3A4;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 4 12;
+    -fx-cursor: hand;
+}
+
+.calendario-cuidados .button:hover { -fx-background-color: #ECF5E2; }
+.calendario-cuidados .calendario-boton-hoy { -fx-background-color: #B7D17A; }
+.calendario-cuidados .calendario-boton-hoy:hover { -fx-background-color: #9DBD60; }
+.calendario-cuidados .calendario-cerrar {
+    -fx-background-color: #006850;
+    -fx-text-fill: white;
+    -fx-padding: 8 20;
+}
+.calendario-cuidados .calendario-cerrar:hover { -fx-background-color: #004F2E; }
+
+.calendario-cuidados .button:hover,
+.calendario-cuidados .button:focused {
+    -fx-border-color: #004F2E;
+}
+
+.calendario-cuidados .button:focused {
+    -fx-effect: dropshadow(gaussian, #004F2E, 3, 0.48, 0, 0);
+}
+
+.calendario-semana {
+    -fx-background-color: #254E06;
+    -fx-background-radius: 6;
+    -fx-padding: 3 0;
+    -fx-text-fill: #F5EAB9;
+    -fx-font-weight: bold;
+}
+
+.calendario-cuidados .calendario-dia {
+    -fx-min-height: 28px;
+    -fx-padding: 3 4;
+}
+
+.calendario-cuidados .calendario-hoy {
+    -fx-border-color: #004F2E;
+    -fx-border-width: 2px;
+    -fx-font-weight: bold;
+}
+
+.calendario-cuidados .calendario-seleccion,
+.calendario-cuidados .calendario-seleccion:hover {
+    -fx-background-color: #EAD465;
+    -fx-border-color: #927B27;
+}
+
+.calendario-mes,
+.calendario-fecha {
+    -fx-text-fill: #004F2E;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.calendario-fecha { -fx-font-size: 18px; }
+.calendario-pronostico {
+    -fx-background-color: #ECF5E2;
+    -fx-background-radius: 8;
+    -fx-padding: 5 8;
+    -fx-text-fill: #004F2E;
+}
+.calendario-sugerencia {
+    -fx-padding: 2 8 3;
+    -fx-text-fill: #004F2E;
+    -fx-font-weight: bold;
+}
+.calendario-mensaje { -fx-padding: 8 2; -fx-text-fill: #46533F; }
+
+.calendario-cuidados .scroll-pane,
+.calendario-cuidados .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.calendario-tarjeta {
+    -fx-padding: 10;
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #D7E3A4;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-radius: 12;
+}
+
+.calendario-tarjeta.atencion { -fx-border-color: #D7E3A4 #D7E3A4 #D7E3A4 #A12639; }
+.calendario-tarjeta.revision { -fx-border-color: #D7E3A4 #D7E3A4 #D7E3A4 #EAD465; }
+.calendario-tarjeta.registrado { -fx-border-color: #D7E3A4 #D7E3A4 #D7E3A4 #007247; }
+.calendario-tarjeta.insuficiente { -fx-border-color: #D7E3A4 #D7E3A4 #D7E3A4 #636A63; }
+
+.calendario-etiqueta {
+    -fx-background-radius: 8;
+    -fx-padding: 3 7;
+    -fx-font-weight: bold;
+}
+
+.calendario-etiqueta.atencion { -fx-background-color: #F6D9DC; -fx-text-fill: #8B2131; }
+.calendario-etiqueta.revision { -fx-background-color: #EAD465; -fx-text-fill: #534400; }
+.calendario-etiqueta.registrado { -fx-background-color: #D6EAD9; -fx-text-fill: #004F2E; }
+.calendario-etiqueta.insuficiente { -fx-background-color: #E7E9E6; -fx-text-fill: #424842; }
+.calendario-marca { -fx-font-size: 12px; -fx-font-weight: bold; }
+.calendario-marca.atencion { -fx-text-fill: #A12639; }
+.calendario-marca.revision { -fx-text-fill: #806600; }
+.calendario-marca.registrado { -fx-text-fill: #007247; }
+.calendario-marca.insuficiente { -fx-text-fill: #636A63; }

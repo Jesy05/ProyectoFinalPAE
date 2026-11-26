@@ -4,8 +4,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import ni.edu.uam.proyectofinalpae.api.HttpStatusException;
 import ni.edu.uam.proyectofinalpae.dao.ColmenaDao;
 import ni.edu.uam.proyectofinalpae.dao.CultivoDao;
 import ni.edu.uam.proyectofinalpae.dao.ModuloDao;
@@ -16,7 +18,9 @@ import ni.edu.uam.proyectofinalpae.model.*;
 import ni.edu.uam.proyectofinalpae.service.WikipediaService;
 import ni.edu.uam.proyectofinalpae.util.Mensajes;
 
+import java.net.http.HttpTimeoutException;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /** CRUD de plantas con su sensor de humedad (relacion uno a uno). */
 public class PlantaController {
@@ -51,6 +55,8 @@ public class PlantaController {
     private final ColmenaDao colmenaDao = new ColmenaDao();
     private final WikipediaService wikipediaService = new WikipediaService();
     private Planta seleccionada;
+    private boolean actualizandoLecturas;
+    private Task<WikipediaSummary> consultaWikipediaActiva;
 
     @FXML
     public void initialize() {
@@ -64,9 +70,41 @@ public class PlantaController {
         colSiembra.setCellValueFactory(new PropertyValueFactory<>("fechaSiembra"));
         colHumedad.setCellValueFactory(d -> new SimpleStringProperty(textoHumedad(d.getValue())));
         tblPlantas.getSelectionModel().selectedItemProperty()
-                .addListener((obs, anterior, planta) -> cargarFormulario(planta));
+                .addListener((obs, anterior, planta) -> {
+                    if (!actualizandoLecturas) cargarFormulario(planta);
+                });
+        txtConsultaWikipedia.textProperty().addListener((obs, anterior, actual) -> limpiarWikipedia());
         nuevo();
         recargar();
+        CambiosCuidados.observar(tblPlantas, this::actualizarLecturas);
+    }
+
+    private void actualizarLecturas() {
+        Colmena filtro = cbFiltroColmena.getValue();
+        try {
+            Planta anterior = seleccionada;
+            var plantas = filtro == null ? plantaDao.listar() : plantaDao.buscarPorColmena(filtro.getId());
+            actualizandoLecturas = true;
+            try {
+                tblPlantas.setItems(FXCollections.observableArrayList(plantas));
+                if (anterior != null) {
+                    seleccionada = plantas.stream().filter(p -> p.getId().equals(anterior.getId()))
+                            .findFirst().orElse(null);
+                    if (seleccionada == null) {
+                        nuevo();
+                    } else {
+                        tblPlantas.getSelectionModel().select(seleccionada);
+                        if (txtHumedad.getText().equals(lecturaFormulario(anterior))) {
+                            txtHumedad.setText(lecturaFormulario(seleccionada));
+                        }
+                    }
+                }
+            } finally {
+                actualizandoLecturas = false;
+            }
+        } catch (Exception e) {
+            Mensajes.error("No se pudieron actualizar las lecturas de las plantas.", e);
+        }
     }
 
     @FXML
@@ -106,6 +144,16 @@ public class PlantaController {
         txtCodigoSensor.clear();
         txtHumedad.setText("60");
         txtConsultaWikipedia.clear();
+        limpiarWikipedia();
+    }
+
+    private void limpiarWikipedia() {
+        if (consultaWikipediaActiva != null) {
+            consultaWikipediaActiva.cancel();
+            consultaWikipediaActiva = null;
+        }
+        btnConsultarWikipedia.setDisable(false);
+        lnkWikipedia.setDisable(true);
         lblWikipediaTitulo.setText("Sin consulta");
         lblWikipediaDescripcion.setText("");
         lblWikipediaExtracto.setText("Seleccione una planta para consultar información.");
@@ -128,6 +176,7 @@ public class PlantaController {
             return;
         }
 
+        limpiarWikipedia();
         String consultaFinal = consulta;
         btnConsultarWikipedia.setDisable(true);
         lblWikipediaTitulo.setText("Consultando...");
@@ -140,17 +189,23 @@ public class PlantaController {
             }
         };
 
+        consultaWikipediaActiva = task;
         task.setOnSucceeded(event -> {
+            if (consultaWikipediaActiva != task) return;
+            consultaWikipediaActiva = null;
             WikipediaSummary result = task.getValue();
             lblWikipediaTitulo.setText(result.title());
             lblWikipediaDescripcion.setText(result.description());
             lblWikipediaExtracto.setText(result.extract());
             lnkWikipedia.setText(result.pageUrl().isBlank() ? "Wikipedia" : result.pageUrl());
             lnkWikipedia.setUserData(result.pageUrl());
+            lnkWikipedia.setDisable(result.pageUrl().isBlank());
             btnConsultarWikipedia.setDisable(false);
         });
 
         task.setOnFailed(event -> {
+            if (consultaWikipediaActiva != task) return;
+            consultaWikipediaActiva = null;
             btnConsultarWikipedia.setDisable(false);
             Throwable cause = task.getException();
             String recomendacion = "Tal vez el nombre de la planta no está bien escrito. "
@@ -158,7 +213,7 @@ public class PlantaController {
                     + "(por ejemplo, Albahaca u Ocimum basilicum).";
 
             // Wikipedia responde 404 cuando no existe una pagina con ese nombre
-            if (cause != null && cause.getMessage() != null && cause.getMessage().contains("404")) {
+            if (cause instanceof HttpStatusException http && http.statusCode() == 404) {
                 lblWikipediaTitulo.setText("Cultivo no encontrado");
                 lblWikipediaExtracto.setText("No encontramos \"" + consultaFinal + "\" en Wikipedia. "
                         + recomendacion);
@@ -168,12 +223,14 @@ public class PlantaController {
             }
 
             lblWikipediaTitulo.setText("Consulta no disponible");
-            lblWikipediaExtracto.setText("No se pudo consultar Wikipedia. " + recomendacion
-                    + " También revise su conexión a internet.");
-            Exception detail = cause instanceof Exception exception
-                    ? exception : new RuntimeException(cause);
-            Mensajes.error("No se pudo consultar la ficha del cultivo.\n\n" + recomendacion
-                    + "\nTambién revise su conexión a internet.", detail);
+            String mensaje = switch (cause) {
+                case HttpTimeoutException error -> "Wikipedia no respondió a tiempo. Intente de nuevo.";
+                case HttpStatusException error when error.statusCode() == 429 ->
+                        "Wikipedia alcanzó el límite de consultas. Intente más tarde.";
+                case HttpStatusException error -> "Wikipedia devolvió HTTP " + error.statusCode() + ".";
+                case null, default -> "No se obtuvo un resumen válido. Revise la conexión e intente de nuevo.";
+            };
+            lblWikipediaExtracto.setText(mensaje);
         });
 
         Thread worker = new Thread(task, "plantbee-wikipedia-query");
@@ -238,13 +295,13 @@ public class PlantaController {
 
             if (planta.getId() == null) {
                 plantaDao.guardar(planta);
-                Mensajes.info("Planta registrada con su sensor " + codigo + ".");
             } else {
                 plantaDao.actualizar(planta);
-                Mensajes.info("Planta actualizada.");
             }
             nuevo();
-            recargar();
+            CambiosCuidados.notificar();
+            Mensajes.info(idActual == null ? "Planta registrada con su sensor " + codigo + "."
+                    : "Planta actualizada.");
         } catch (IllegalArgumentException e) {
             Mensajes.advertencia(e.getMessage());
         } catch (Exception e) {
@@ -263,22 +320,18 @@ public class PlantaController {
         try {
             plantaDao.eliminar(seleccionada.getId());
             nuevo();
-            recargar();
+            CambiosCuidados.notificar();
         } catch (Exception e) {
             Mensajes.error("No se pudo eliminar. Si la planta tiene riegos o alertas, eliminelos primero.", e);
         }
     }
 
-    /** Demo: baja la humedad de todos los sensores para poder generar alertas. */
     @FXML
-    private void simularSecado() {
-        try {
-            int afectados = sensorDao.simularSecado();
-            recargar();
-            Mensajes.info("Se simularon nuevas lecturas en " + afectados + " sensores (-15 % de humedad).");
-        } catch (Exception e) {
-            Mensajes.error("No se pudo simular la lectura de sensores.", e);
-        }
+    private void simularSecado(ActionEvent evento) {
+        CambiosCuidados.ejecutar((Button) evento.getSource(), sensorDao::simularSecado,
+                afectados -> Mensajes.info("Se simularon nuevas lecturas en " + afectados
+                        + " sensores (-15 puntos de humedad)."),
+                "No se pudo simular la lectura de sensores.");
     }
 
     private int leerPorcentaje(String texto) {
@@ -291,15 +344,24 @@ public class PlantaController {
         }
     }
 
+    private static String lecturaFormulario(Planta planta) {
+        return planta.getSensor() == null ? "" : Objects.toString(planta.getSensor().getHumedadActual(), "");
+    }
+
     private String textoHumedad(Planta p) {
         if (p.getSensor() == null) return "Sin sensor";
+        if (p.getSensor().getHumedadActual() == null) return "Lectura no disponible";
         String texto = p.getSensor().getHumedadActual() + " % (min " + p.getCultivo().getHumedadMinima() + ")";
         return p.getSensor().necesitaRiego() ? texto + "  REGAR" : texto;
     }
 
     private void cargarFormulario(Planta planta) {
+        limpiarWikipedia();
         seleccionada = planta;
-        if (planta == null) return;
+        if (planta == null) {
+            txtConsultaWikipedia.clear();
+            return;
+        }
         if (planta.getCultivo() != null) {
             String cientifico = planta.getCultivo().getNombreCientifico();
             txtConsultaWikipedia.setText(cientifico == null || cientifico.isBlank()
@@ -314,7 +376,9 @@ public class PlantaController {
         cbEstado.setValue(planta.getEstado());
         if (planta.getSensor() != null) {
             txtCodigoSensor.setText(planta.getSensor().getCodigo());
-            txtHumedad.setText(String.valueOf(planta.getSensor().getHumedadActual()));
+        } else {
+            txtCodigoSensor.clear();
         }
+        txtHumedad.setText(lecturaFormulario(planta));
     }
 }

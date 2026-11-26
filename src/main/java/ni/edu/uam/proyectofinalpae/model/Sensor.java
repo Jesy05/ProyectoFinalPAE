@@ -20,7 +20,7 @@ public class Sensor {
 
     /** Lectura actual de humedad del sustrato, de 0 a 100 %. */
     @Column(name = "humedad_actual", nullable = false)
-    private int humedadActual;
+    private Integer humedadActual;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "planta_id", nullable = false, unique = true)
@@ -29,14 +29,14 @@ public class Sensor {
     public Sensor() {
     }
 
-    public Sensor(String codigo, int humedadActual) {
+    public Sensor(String codigo, Integer humedadActual) {
         this.codigo = codigo;
         this.humedadActual = humedadActual;
     }
 
     /** True si la humedad esta por debajo del minimo que pide el cultivo. */
     public boolean necesitaRiego() {
-        return humedadActual < planta.getCultivo().getHumedadMinima();
+        return humedadActual != null && humedadActual < planta.getCultivo().getHumedadMinima();
     }
 
     public Long getId() {
@@ -51,11 +51,11 @@ public class Sensor {
         this.codigo = codigo;
     }
 
-    public int getHumedadActual() {
+    public Integer getHumedadActual() {
         return humedadActual;
     }
 
-    public void setHumedadActual(int humedadActual) {
+    public void setHumedadActual(Integer humedadActual) {
         this.humedadActual = humedadActual;
     }
 

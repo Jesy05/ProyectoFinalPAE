@@ -18,6 +18,35 @@ public class PlantaDao extends GenericDao<Planta> {
         super(Planta.class);
     }
 
+    @Override
+    public void guardar(Planta planta) {
+        enTransaccion(s -> {
+            s.persist(planta);
+            AlertaDao.conciliarHumedad(s, planta);
+            return null;
+        });
+    }
+
+    @Override
+    public Planta actualizar(Planta planta) {
+        return enTransaccion(s -> {
+            if (planta.getId() != null && !AlertaDao.bloquearPlanta(s, planta.getId())) {
+                throw new IllegalArgumentException("La planta ya no existe.");
+            }
+            Planta actualizada = s.merge(planta);
+            AlertaDao.conciliarHumedad(s, actualizada);
+            return actualizada;
+        });
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        enTransaccion(s -> {
+            if (AlertaDao.bloquearPlanta(s, id)) s.remove(s.find(Planta.class, id));
+            return null;
+        });
+    }
+
     /** HQL sobre 5 entidades relacionadas: Planta, Cultivo, Modulo, Colmena y Sensor. */
     @Override
     public List<Planta> listar() {

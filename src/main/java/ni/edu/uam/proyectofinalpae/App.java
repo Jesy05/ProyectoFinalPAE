@@ -81,7 +81,7 @@ public class App extends Application {
         } catch (Exception e) {
             e.printStackTrace();
             Mensajes.error("No se pudo iniciar PlantBee. Revise que PostgreSQL este encendido "
-                    + "y que exista src/main/resources/db.properties con su clave.", e);
+                    + "y que la configuración de credenciales sea válida.", e);
             Platform.exit();
         }
     }
