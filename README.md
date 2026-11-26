@@ -121,8 +121,13 @@ La pestana **Reportes** genera tres reportes con JasperReports, los muestra dent
    ```sql
    CREATE DATABASE plantbedb;
    ```
-4. Copie `src/main/resources/db.properties.example` como `src/main/resources/db.properties`
-   y escriba su usuario y clave local de PostgreSQL. **Este archivo esta en `.gitignore` y nunca se sube.**
+4. Configure PostgreSQL con las variables `PLANTBEE_DB_URL`, `PLANTBEE_DB_USER` y
+   `PLANTBEE_DB_PASSWORD`, o cree un `db.properties` local fuera de los recursos
+   empaquetados. Use las claves `db.url`, `db.user` y `db.password`. Puede definir
+   `PLANTBEE_DB_CONFIG` para señalar ese archivo. Sin esa variable, se busca primero
+   `db.properties` en el directorio de trabajo y luego el archivo local existente en
+   `src/main/resources/db.properties`. Cada variable de credenciales tiene prioridad
+   sobre el archivo. Use únicamente marcadores en la plantilla versionada.
 5. Abra el proyecto en IntelliJ y espere a que Maven descargue las dependencias.
 
 ## Ejecucion
@@ -136,13 +141,88 @@ La pestana **Reportes** genera tres reportes con JasperReports, los muestra dent
 La primera vez Hibernate crea las tablas (`hbm2ddl.auto=update`). Despues ejecute en pgAdmin el archivo
 `database/datos_prueba.sql` para cargar el catalogo de cultivos.
 
+## Servicios REST
+
+PlantBee consume [Wikipedia](docs/WIKIPEDIA-PLANTAS.md) desde Plantas.
+La [API propia](docs/API.md) sirve datos de solo lectura a clientes del mismo equipo
+por `127.0.0.1:8080`.
+
 ## Flujo de demostracion
 
 1. **Usuarios**: registre un usuario.
 2. **Colmenas**: cree una colmena para ese usuario (se generan sus modulos automaticamente).
-3. **Plantas**: siembre plantas en los modulos con su sensor de humedad. Pulse *Simular lectura de sensores* varias veces.
-4. **Riegos y alertas**: pulse *Revisar sensores* para generar alertas; registre un riego con agua de lluvia
-   y vea como la alerta queda atendida y se actualiza el total de agua reutilizada.
+3. **Plantas**: registre una planta con una lectura inferior al mínimo del cultivo.
+   Al guardar, la alerta de humedad queda pendiente. Edite la lectura o pulse
+   *Simular lectura de sensores* para comprobar que se muestran los porcentajes actuales.
+4. **Riegos y alertas**: pulse *Revisar sensores* para conciliar las lecturas
+   existentes. Registre un riego. Si tiene sensor, la humedad sube al 90 %.
+   La alerta de humedad se cierra cuando el 90 % alcanza el mínimo del cultivo.
+   Abra **Ver calendario** para consultar el riego registrado y la condición
+   vigente. El calendario usa la API REST local y muestra el pronóstico de
+   Open-Meteo para Managua cuando hay datos para la fecha seleccionada.
+
+La simulación, las ediciones de lecturas y los riegos confirman el cambio y la
+conciliación de alertas en la misma transacción. Si faltan datos, se conserva el
+aviso anterior. Los reportes de alertas pendientes muestran la lectura vigente.
+
+## Verificación de alertas y cuidados
+
+Ejecute `./mvnw test` para las pruebas unitarias. Para incluir la suite de
+integración, cree una base PostgreSQL **desechable** llamada `plantbee_test`
+en loopback. Configure `PLANTBEE_DB_URL` como
+`jdbc:postgresql://127.0.0.1:PUERTO/plantbee_test` y defina `PLANTBEE_DB_USER`
+y `PLANTBEE_DB_PASSWORD` para esa instancia en el entorno de la terminal de
+pruebas. La suite crea datos sintéticos y una restricción de prueba para provocar
+un rollback. En un equipo con escritorio, defina también
+`PLANTBEE_TEST_JAVAFX=true` para incluir la verificación de las tablas en una
+ventana invisible.
+
+Para reproducir el flujo desde la aplicación en esa base de pruebas:
+
+1. Use un cultivo con un mínimo de 40 % y una planta con 25 %. Compruebe
+   **Requiere atención** en el calendario y un único aviso en la tabla. Cambie
+   la lectura a 35 % y pulse **Revisar sensores** dos veces. El mismo aviso
+   muestra 35 %. A 40 % se cierra y a 41 % sigue cerrado.
+2. Con humedad baja, marque el aviso como atendido o elimínelo manualmente.
+   El calendario sigue indicando atención. Revise sensores para comprobar que
+   vuelve a aparecer un único aviso. Simule lecturas y verifique el nuevo valor.
+3. Registre un riego y compruebe **Riego registrado** y 90 % en Plantas. Con
+   un cultivo de prueba cuyo mínimo sea 95 %, también debe seguir apareciendo
+   **Requiere atención**. Un aviso de otro tipo permanece pendiente.
+4. Consulte `/api/alertas` y `/api/cuidados?plantaId=...` según la
+   [documentación REST](docs/API.md). Compare los porcentajes. Exporte PDF y
+   Excel desde Reportes y compruebe el texto vigente de la alerta.
+5. Sin acceso a Internet, mantenga PostgreSQL y la aplicación en ejecución.
+   Abra el calendario para verificar que las actividades locales siguen visibles
+   y que el fallo del pronóstico se indica por separado. Cierre y vuelva a abrir
+   el calendario después de un cambio y verifique la lectura vigente.
+
+## Pronóstico y reportes JasperReports
+
+El calendario carga por separado `GET /api/cuidados?mes=AAAA-MM` y el
+pronóstico diario de Open-Meteo para Managua. **Actualizar clima** vuelve a
+consultar el proveedor. PlantBee muestra la temperatura máxima, la probabilidad
+máxima de precipitación, la fuente y la hora local de la última consulta exitosa.
+La fecha seleccionada determina qué pronóstico se muestra. Los fallos de clima
+se indican en su propio bloque y los cuidados locales permanecen consultables.
+
+En **Reportes**, seleccione *Inventario de plantas y sensores* o *Historial de
+riego*, pulse **Generar reporte** y elija PDF o Excel. Ambos formatos usan el
+mismo conjunto de filas y fecha de generación. Si cambia un dato desde PlantBee,
+genere de nuevo la vista previa para exportar los datos vigentes.
+
+| Reporte | Diseño para Jaspersoft Studio | Compilado | PDF de ejemplo |
+|---|---|---|---|
+| Inventario de plantas y sensores | [JRXML](src/main/resources/reportes/plantas.jrxml) | [JASPER](src/main/resources/reportes/plantas.jasper) | [6 plantas](output/pdf/plantbee-plantas.pdf) |
+| Historial de riego | [JRXML](src/main/resources/reportes/riegos.jrxml) | [JASPER](src/main/resources/reportes/riegos.jasper) | [7 riegos](output/pdf/plantbee-riegos.pdf) |
+| Alertas pendientes | [JRXML](src/main/resources/reportes/alertas.jrxml) | [JASPER](src/main/resources/reportes/alertas.jasper) | |
+
+Los ejemplos corresponden a los registros de demostración que estaban
+guardados en PostgreSQL el 26/11/2026. Las dos exportaciones muestran encabezados
+y fecha de generación. Para editar un diseño, abra el JRXML en Jaspersoft
+Studio y vuelva a compilarlo con la versión de JasperReports del `pom.xml`.
+PlantBee compila el JRXML en su primera generación, de modo que los cambios al
+diseño se reflejan en la aplicación.
 
 ## Flujo de trabajo con Git
 
