@@ -91,16 +91,48 @@ no se usa JDBC directo. Consultas HQL sobre entidades relacionadas:
 | `RiegoDao` | `litrosPorOrigen()` | `SUM` + `GROUP BY` del agua usada por origen (lluvia, gris filtrada, potable) |
 | `AlertaDao` | `listarPendientes()` / `generarAlertasHumedad()` | Alertas con planta y ubicacion; crea alertas con `NOT EXISTS` |
 
+## Probar Reportes desde IntelliJ
+
+Seleccione **PlantBee Demo Reportes** en las configuraciones de ejecución de
+IntelliJ. Este perfil usa `database/demo-reportes.properties` y la base
+`plantbee_demo_reportes` en el PostgreSQL local aislado del puerto 55432.
+`PLANTBEE_DB_CONFIG` selecciona un archivo de configuración. Las variables
+`PLANTBEE_DB_URL`, `PLANTBEE_DB_USER` y `PLANTBEE_DB_PASSWORD`, si están presentes
+en el proceso de IntelliJ o en la configuración, tienen prioridad sobre el
+archivo. Las variables definidas en una terminal abierta después de iniciar
+IntelliJ solo afectan a esa terminal y sus procesos hijos.
+
+El perfil requiere que el clúster de demostración ya exista y esté iniciado.
+Detener y reiniciar el mismo clúster conserva los registros en su directorio
+de datos. El clúster preparado para esta prueba está en una ruta temporal,
+por lo que una limpieza de Windows puede eliminarlo. El script
+[`datos_demo_reportes.sql`](database/datos_demo_reportes.sql) permite repoblar
+una base demo inicializada por Hibernate.
+
 ## Reportes (JasperReports)
 
-La pestana **Reportes** genera tres reportes con JasperReports, los muestra dentro de la app
-(vista previa pagina por pagina) y los exporta a **PDF** y a **Excel (.xlsx)**.
+La pestaña **Reportes** genera cuatro reportes con JasperReports y permite
+previsualizarlos y exportarlos a **PDF** o **Excel (.xlsx)**.
 
 | Reporte | Plantilla | Contenido |
 |---|---|---|
 | Inventario de plantas y sensores | `reportes/plantas.jrxml` | Planta, cultivo, ubicacion, estado, humedad y si necesita riego |
 | Historial de riego | `reportes/riegos.jrxml` | Fecha, planta, cantidad y origen del agua, con litros por origen |
 | Alertas pendientes | `reportes/alertas.jrxml` | Alertas sin atender con su planta y mensaje |
+| Calendario de cuidados | `reportes/calendario.jrxml` | Fecha, planta, actividad, estado y detalle del mes elegido |
+
+Abra **Filtros de reportes** para acotar el inventario por cultivo y colmena.
+Los riegos y las alertas comparten el período histórico elegido. Puede usar
+el mes, el año, un rango con ambas fechas incluidas o todo el historial.
+Las alertas también se pueden seleccionar por estado y tipo. Por defecto se
+muestra el mes actual y las alertas pendientes.
+
+El calendario usa el mes y año seleccionados en el panel, incluso si el
+historial usa un rango. Sus filas proceden del mismo servicio que alimenta
+el calendario de JavaFX. El **Reporte general** reúne las cuatro secciones
+en un PDF o cuatro hojas en Excel y conserva el inventario a la fecha de
+generación. **Exportar todos (ZIP)** aplica los mismos filtros a los
+ocho archivos individuales.
 
 - Los datos se leen con **Hibernate** (los mismos DAO de las pantallas) y se pasan al reporte con
   `JRMapCollectionDataSource`; no se usa JDBC directo.
@@ -206,6 +238,11 @@ máxima de precipitación, la fuente y la hora local de la última consulta exit
 La fecha seleccionada determina qué pronóstico se muestra. Los fallos de clima
 se indican en su propio bloque y los cuidados locales permanecen consultables.
 
+Al iniciar PlantBee se concilian en segundo plano las alertas de humedad con
+las lecturas guardadas. La revisión usa los mismos bloqueos que **Revisar
+sensores** y conserva los avisos atendidos en el historial. Si una condición
+sigue activa, puede generar otro aviso pendiente.
+
 En **Reportes**, seleccione *Inventario de plantas y sensores* o *Historial de
 riego*, pulse **Generar reporte** y elija PDF o Excel. Ambos formatos usan el
 mismo conjunto de filas y fecha de generación. Si cambia un dato desde PlantBee,
@@ -216,6 +253,7 @@ genere de nuevo la vista previa para exportar los datos vigentes.
 | Inventario de plantas y sensores | [JRXML](src/main/resources/reportes/plantas.jrxml) | [JASPER](src/main/resources/reportes/plantas.jasper) | [6 plantas](output/pdf/plantbee-plantas.pdf) |
 | Historial de riego | [JRXML](src/main/resources/reportes/riegos.jrxml) | [JASPER](src/main/resources/reportes/riegos.jasper) | [7 riegos](output/pdf/plantbee-riegos.pdf) |
 | Alertas pendientes | [JRXML](src/main/resources/reportes/alertas.jrxml) | [JASPER](src/main/resources/reportes/alertas.jasper) | |
+| Calendario de cuidados | [JRXML](src/main/resources/reportes/calendario.jrxml) | [JASPER](src/main/resources/reportes/calendario.jasper) | |
 
 Los ejemplos corresponden a los registros de demostración que estaban
 guardados en PostgreSQL el 26/11/2026. Las dos exportaciones muestran encabezados
