@@ -2,12 +2,15 @@ package ni.edu.uam.proyectofinalpae;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ni.edu.uam.proyectofinalpae.api.ApiServidor;
+import ni.edu.uam.proyectofinalpae.controller.CambiosCuidados;
+import ni.edu.uam.proyectofinalpae.dao.AlertaDao;
 import ni.edu.uam.proyectofinalpae.util.HibernateUtil;
 import ni.edu.uam.proyectofinalpae.util.LogoPlantBee;
 import ni.edu.uam.proyectofinalpae.util.Mensajes;
@@ -37,6 +40,7 @@ public class App extends Application {
     private static final Logger LOG_HIBERNATE = Logger.getLogger("org.hibernate");
 
     private final ApiServidor api = new ApiServidor();
+    private Task<Integer> revisionInicial;
 
     @Override
     public void start(Stage stage) {
@@ -77,6 +81,7 @@ public class App extends Application {
             stage.getIcons().add(LogoPlantBee.icono(64));
             stage.show();
             stage.centerOnScreen();
+            revisarAlertasAlIniciar();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,8 +91,25 @@ public class App extends Application {
         }
     }
 
+    private void revisarAlertasAlIniciar() {
+        revisionInicial = new Task<>() {
+            @Override
+            protected Integer call() {
+                return new AlertaDao().generarAlertasHumedad();
+            }
+        };
+        revisionInicial.setOnSucceeded(evento -> CambiosCuidados.notificar());
+        revisionInicial.setOnFailed(evento -> LOG_HIBERNATE.log(Level.WARNING,
+                "No se pudo conciliar las alertas al iniciar. Use Revisar sensores para reintentar.",
+                revisionInicial.getException()));
+        Thread hilo = new Thread(revisionInicial, "plantbee-revision-inicial");
+        hilo.setDaemon(true);
+        hilo.start();
+    }
+
     @Override
     public void stop() {
+        if (revisionInicial != null) revisionInicial.cancel();
         api.detener();
         HibernateUtil.cerrar();
     }
