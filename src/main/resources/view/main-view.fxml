@@ -69,6 +69,12 @@
                     </content>
                 </Tab>
 
+                <Tab text="Monitoreo">
+                    <content>
+                        <fx:include source="monitoreo-view.fxml"/>
+                    </content>
+                </Tab>
+
                 <Tab text="Reportes">
                     <content>
                         <fx:include source="reporte-view.fxml"/>

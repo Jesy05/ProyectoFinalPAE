@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<!-- Pestana Monitoreo: tablero en vivo de sensores, valvula, tanque y energia solar -->
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ni.edu.uam.proyectofinalpae.controller.MonitoreoController"
+      fx:id="raiz"
+      styleClass="monitoreo-page"
+      spacing="16">
+
+    <!-- Encabezado con indicador "en vivo" -->
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <VBox spacing="2">
+            <Label text="Monitoreo en tiempo real" styleClass="page-title"/>
+            <Label text="Sensores capacitivos de humedad · válvula de 12 V · tanque de agua recuperada · energía solar"
+                   styleClass="monitoreo-subtitulo" wrapText="true"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <HBox styleClass="en-vivo" alignment="CENTER" spacing="8">
+            <Circle fx:id="puntoVivo" radius="5" styleClass="punto-vivo"/>
+            <VBox>
+                <Label text="EN VIVO" styleClass="en-vivo-texto"/>
+                <Label fx:id="lblUltimaLectura" text="Leyendo sensores…" styleClass="en-vivo-hora"/>
+            </VBox>
+        </HBox>
+    </HBox>
+
+    <!-- Estado del sistema: tanque, energia y riego automatico -->
+    <HBox fx:id="filaEstado" spacing="14">
+
+        <HBox styleClass="estado-card" spacing="16" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" minWidth="270">
+            <StackPane fx:id="tanque" styleClass="tanque"/>
+            <VBox spacing="6">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <FontIcon iconLiteral="mdi2w-water-well" iconSize="20" styleClass="estado-icono"/>
+                    <Label text="Tanque de agua" styleClass="estado-titulo"/>
+                </HBox>
+                <Label fx:id="lblTanque" text="—" styleClass="estado-valor"/>
+                <Label text="Lluvia + agua gris filtrada" styleClass="estado-nota"/>
+                <Button text="Llenar con lluvia" styleClass="btn-estado" onAction="#llenarTanque"/>
+            </VBox>
+        </HBox>
+
+        <VBox styleClass="estado-card" spacing="6" HBox.hgrow="ALWAYS">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <FontIcon fx:id="iconoSol" iconLiteral="mdi2w-white-balance-sunny" iconSize="22" styleClass="icono-sol"/>
+                <Label text="Energía solar" styleClass="estado-titulo"/>
+            </HBox>
+            <Label fx:id="lblPotencia" text="—" styleClass="estado-valor"/>
+            <StackPane fx:id="barraBateria" alignment="CENTER_LEFT"/>
+            <Label fx:id="lblBateria" text="Batería —" styleClass="estado-nota"/>
+            <Label text="Panel 20 W · batería 12 V / 10 Ah" styleClass="estado-nota"/>
+        </VBox>
+
+        <VBox styleClass="estado-card, estado-card-auto" spacing="8" HBox.hgrow="ALWAYS">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <FontIcon iconLiteral="mdi2c-chip" iconSize="20" styleClass="estado-icono"/>
+                <Label text="Riego automático" styleClass="estado-titulo"/>
+            </HBox>
+            <ToggleButton fx:id="tglAutomatico" text="Desactivado" styleClass="interruptor"/>
+            <Label text="Revisa los sensores cada 4 s y abre la válvula si la humedad baja del mínimo."
+                   styleClass="estado-nota" wrapText="true" minHeight="-Infinity"/>
+            <Label fx:id="lblRiegosAuto" text="0 riegos automáticos en esta sesión" styleClass="estado-contador"/>
+        </VBox>
+    </HBox>
+
+    <!-- Acciones -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="btnLeer" text="Leer sensores" styleClass="btn-monitoreo" onAction="#leerSensores"/>
+        <Button fx:id="btnSimular" text="Simular paso del tiempo" styleClass="btn-monitoreo-sec"
+                onAction="#simularPasoDelTiempo"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblResumen" styleClass="monitoreo-resumen"/>
+    </HBox>
+
+    <!-- Una tarjeta por planta con su sensor -->
+    <FlowPane fx:id="tarjetasPlantas" hgap="14" vgap="14" styleClass="tarjetas-plantas"/>
+
+</VBox>

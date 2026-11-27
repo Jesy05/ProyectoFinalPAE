@@ -30,7 +30,8 @@ public class App extends Application {
             "navegacion.css",
             "tipografia.css",
             "bienvenida.css",
-            "reportes.css"
+            "reportes.css",
+            "monitoreo.css"
     };
 
     /** Se guarda la referencia para que Java no descarte la configuracion del log. */

@@ -110,6 +110,22 @@ La pestana **Reportes** genera tres reportes con JasperReports, los muestra dent
   alternadas y numeros/fechas como celdas reales (no texto).
 - La generacion y la exportacion corren en segundo plano (`Task`) para no congelar la ventana.
 
+## Monitoreo en tiempo real (simulacion IoT)
+
+La pestana **Monitoreo** simula la parte fisica de la colmena mientras el hardware esta en fase de
+prototipo: un **sensor capacitivo de humedad** por maceta, un **microcontrolador**, un **rele con valvula
+de 12 V**, un **tanque de agua recuperada** (lluvia y agua gris filtrada por el biofiltro) y un **panel solar
+de 20 W** con **bateria de 12 V / 10 Ah**.
+
+- Cada planta tiene un medidor circular animado con su humedad y una marca en la humedad minima del cultivo.
+- Se muestra el **voltaje de salida** que daria el sensor capacitivo: a mas agua, menor voltaje
+  (calibracion tipica: 2.80 V en seco y 1.20 V en agua).
+- En **modo automatico**, cada 4 s el microcontrolador revisa los sensores; si una planta esta bajo su
+  minimo abre la valvula (animacion de gotas), descuenta 250 ml del tanque y **guarda el riego en la base**
+  con `RiegoDao.registrar()` (sube la humedad y atiende la alerta en la misma transaccion).
+- Las lecturas y los riegos son reales en PostgreSQL; el nivel del tanque y la energia solar se simulan en
+  memoria (`SimuladorIoTService`).
+
 ## Instalacion
 
 1. Instale **JDK 21**, **IntelliJ IDEA** y **PostgreSQL** (con pgAdmin).

@@ -1,0 +1,315 @@
+/* =========================================
+   PLANTBEE - MONITOREO EN TIEMPO REAL
+   Archivo: monitoreo.css
+   Paleta: verde #004F2E / #006850, hoja #9DBD60,
+           amarillo #EAD465, crema #F5EAB9 / #FFFDF1, agua #2F8FBF
+   ========================================= */
+
+/* 01. PAGINA Y ENCABEZADO */
+
+.monitoreo-page {
+    -fx-background-color: #ECF5E2;
+    -fx-padding: 20;
+}
+
+.monitoreo-subtitulo {
+    -fx-text-fill: #657733;
+    -fx-font-size: 13px;
+}
+
+.en-vivo {
+    -fx-background-color: #004F2E;
+    -fx-background-radius: 20;
+    -fx-padding: 8 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 79, 46, 0.30), 12, 0, 0, 3);
+}
+
+.punto-vivo {
+    -fx-fill: #7CFC9A;
+    -fx-effect: dropshadow(gaussian, #7CFC9A, 8, 0.4, 0, 0);
+}
+
+.en-vivo-texto {
+    -fx-text-fill: #F5EAB9;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.en-vivo-hora {
+    -fx-text-fill: #CDE8D4;
+    -fx-font-size: 11px;
+}
+
+/* 02. TARJETAS DE ESTADO */
+
+.estado-card {
+    -fx-background-color: linear-gradient(to bottom right, #FFFFFF, #FFFDF1);
+    -fx-background-radius: 20;
+    -fx-padding: 16 18;
+    -fx-border-color: #D7E3A4;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 79, 46, 0.12), 16, 0, 0, 4);
+    -fx-min-width: 240;
+}
+
+.estado-card-auto {
+    -fx-background-color: linear-gradient(to bottom right, #006850, #004F2E);
+    -fx-border-color: transparent;
+}
+
+.estado-card-auto .estado-titulo,
+.estado-card-auto .estado-contador {
+    -fx-text-fill: #F5EAB9;
+}
+
+.estado-card-auto .estado-nota {
+    -fx-text-fill: #CDE8D4;
+}
+
+.estado-card-auto .estado-icono {
+    -fx-icon-color: #EAD465;
+}
+
+.estado-titulo {
+    -fx-text-fill: #004F2E;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.estado-valor {
+    -fx-text-fill: #004F2E;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.estado-nota {
+    -fx-text-fill: #657733;
+    -fx-font-size: 12px;
+}
+
+.estado-contador {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.estado-icono {
+    -fx-icon-color: #006850;
+}
+
+.icono-sol {
+    -fx-icon-color: #E5A100;
+}
+
+.btn-estado {
+    -fx-background-color: #DCEFF7;
+    -fx-text-fill: #1D6A8C;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-padding: 6 14;
+    -fx-cursor: hand;
+}
+
+.btn-estado:hover {
+    -fx-background-color: #C5E4F1;
+}
+
+/* Tanque de agua */
+.tanque-vidrio {
+    -fx-fill: transparent;
+    -fx-stroke: #9CC7DA;
+    -fx-stroke-width: 2.5;
+    -fx-arc-width: 18;
+    -fx-arc-height: 18;
+}
+
+.tanque-agua {
+    -fx-fill: linear-gradient(to bottom, #6CC4E8, #2F8FBF);
+    -fx-arc-width: 12;
+    -fx-arc-height: 12;
+}
+
+/* Bateria */
+.bateria-fondo {
+    -fx-fill: #E8EDD8;
+    -fx-arc-width: 12;
+    -fx-arc-height: 12;
+}
+
+.bateria-carga {
+    -fx-fill: linear-gradient(to right, #9DBD60, #2E9E6A);
+    -fx-arc-width: 12;
+    -fx-arc-height: 12;
+}
+
+/* Interruptor de riego automatico */
+.interruptor {
+    -fx-background-color: #2F6B4B;
+    -fx-text-fill: #CDE8D4;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 8 22;
+    -fx-cursor: hand;
+}
+
+.interruptor:selected {
+    -fx-background-color: #EAD465;
+    -fx-text-fill: #004F2E;
+    -fx-effect: dropshadow(gaussian, rgba(234, 212, 101, 0.7), 14, 0.2, 0, 0);
+}
+
+/* 03. ACCIONES */
+
+.btn-monitoreo,
+.btn-monitoreo-sec {
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-monitoreo {
+    -fx-background-color: #006850;
+    -fx-text-fill: #FFFDF1;
+}
+
+.btn-monitoreo .ikonli-font-icon {
+    -fx-icon-color: #EAD465;
+}
+
+.btn-monitoreo-sec {
+    -fx-background-color: #F5EAB9;
+    -fx-text-fill: #254E06;
+}
+
+.monitoreo-resumen {
+    -fx-text-fill: #254E06;
+    -fx-font-weight: bold;
+}
+
+/* 04. TARJETAS DE PLANTAS */
+
+.planta-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 20;
+    -fx-padding: 16;
+    -fx-border-color: #E3EBC9;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 79, 46, 0.10), 14, 0, 0, 4);
+}
+
+.planta-card:hover {
+    -fx-border-color: #9DBD60;
+    -fx-effect: dropshadow(gaussian, rgba(0, 79, 46, 0.22), 20, 0, 0, 6);
+}
+
+.planta-card-nombre {
+    -fx-text-fill: #004F2E;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.planta-card-detalle {
+    -fx-text-fill: #657733;
+    -fx-font-size: 12px;
+}
+
+.planta-card-dato {
+    -fx-text-fill: #254E06;
+    -fx-font-size: 12px;
+}
+
+.planta-card-dato .ikonli-font-icon {
+    -fx-icon-color: #80A32F;
+}
+
+.valvula-abierta {
+    -fx-text-fill: #1D6A8C;
+    -fx-font-weight: bold;
+}
+
+.valvula-abierta .ikonli-font-icon {
+    -fx-icon-color: #2F8FBF;
+}
+
+.gota {
+    -fx-fill: #4FB3DE;
+}
+
+/* Chips de estado */
+.chip {
+    -fx-background-radius: 12;
+    -fx-padding: 3 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.chip-ok {
+    -fx-background-color: #DFF3E6;
+    -fx-text-fill: #1E7A4C;
+}
+
+.chip-regar {
+    -fx-background-color: #FBE1DA;
+    -fx-text-fill: #A23A23;
+}
+
+.chip-regando {
+    -fx-background-color: #DCEFF7;
+    -fx-text-fill: #1D6A8C;
+}
+
+.chip-gris {
+    -fx-background-color: #ECEFE6;
+    -fx-text-fill: #6B7262;
+}
+
+/* Medidor circular de humedad */
+.medidor-pista {
+    -fx-fill: transparent;
+    -fx-stroke: #EEF3E2;
+    -fx-stroke-width: 11;
+}
+
+.medidor-relleno {
+    -fx-fill: transparent;
+    -fx-stroke-width: 11;
+    -fx-stroke: #2E9E6A;
+}
+
+.medidor.bajo .medidor-relleno {
+    -fx-stroke: #D9573B;
+}
+
+.medidor-minimo {
+    -fx-stroke: #EAD465;
+    -fx-stroke-width: 3;
+}
+
+.medidor-valor {
+    -fx-text-fill: #004F2E;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.medidor.bajo .medidor-valor {
+    -fx-text-fill: #A23A23;
+}
+
+.medidor-etiqueta {
+    -fx-text-fill: #89917B;
+    -fx-font-size: 10px;
+}
+
+/* 05. PESTANAS: con Monitoreo son seis, se hacen un poco mas compactas para que quepan */
+
+.tab-pane.plantbee-tabs {
+    -fx-tab-min-width: 118px;
+}
+
+.tab-pane.plantbee-tabs .tab-header-area .tab {
+    -fx-padding: 10 16;
+}
+
+.tab-pane.plantbee-tabs .tab-header-area .tab .tab-label {
+    -fx-font-size: 15px;
+}
