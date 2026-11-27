@@ -2,6 +2,7 @@ package ni.edu.uam.proyectofinalpae.controller;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
@@ -34,6 +35,8 @@ public class PlantaController {
     @FXML private TextField txtHumedad;
     @FXML private ComboBox<Colmena> cbFiltroColmena;
     @FXML private TableView<Planta> tblPlantas;
+    @FXML private TextField txtBuscarPlantas;
+    private ObservableList<Planta> filasBusqueda;
     @FXML private TableColumn<Planta, Long> colId;
     @FXML private TableColumn<Planta, String> colPlanta;
     @FXML private TableColumn<Planta, String> colCultivo;
@@ -60,6 +63,8 @@ public class PlantaController {
 
     @FXML
     public void initialize() {
+        filasBusqueda = BusquedaTabla.instalar(tblPlantas, txtBuscarPlantas, p -> BusquedaTabla.campos(
+                p.getNombreVisible(), p.getCultivo().getNombre(), p.getModulo().getColmena().getNombre()));
         cbEstado.setItems(FXCollections.observableArrayList(
                 "Germinando", "Creciendo", "Lista para cosechar", "Cosechada"));
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -86,9 +91,9 @@ public class PlantaController {
             var plantas = filtro == null ? plantaDao.listar() : plantaDao.buscarPorColmena(filtro.getId());
             actualizandoLecturas = true;
             try {
-                tblPlantas.setItems(FXCollections.observableArrayList(plantas));
+                filasBusqueda.setAll(plantas);
                 if (anterior != null) {
-                    seleccionada = plantas.stream().filter(p -> p.getId().equals(anterior.getId()))
+                    seleccionada = tblPlantas.getItems().stream().filter(p -> p.getId().equals(anterior.getId()))
                             .findFirst().orElse(null);
                     if (seleccionada == null) {
                         nuevo();
@@ -114,7 +119,7 @@ public class PlantaController {
             cbModulo.setItems(FXCollections.observableArrayList(moduloDao.listar()));
             cbFiltroColmena.setItems(FXCollections.observableArrayList(colmenaDao.listar()));
             cbFiltroColmena.setValue(null);
-            tblPlantas.setItems(FXCollections.observableArrayList(plantaDao.listar()));
+            filasBusqueda.setAll(plantaDao.listar());
         } catch (Exception e) {
             Mensajes.error("No se pudieron cargar las plantas.", e);
         }
@@ -126,7 +131,7 @@ public class PlantaController {
         Colmena colmena = cbFiltroColmena.getValue();
         if (colmena == null) return;
         try {
-            tblPlantas.setItems(FXCollections.observableArrayList(plantaDao.buscarPorColmena(colmena.getId())));
+            filasBusqueda.setAll(plantaDao.buscarPorColmena(colmena.getId()));
         } catch (Exception e) {
             Mensajes.error("No se pudo filtrar.", e);
         }

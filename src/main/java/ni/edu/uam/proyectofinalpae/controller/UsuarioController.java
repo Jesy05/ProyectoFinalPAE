@@ -1,6 +1,6 @@
 package ni.edu.uam.proyectofinalpae.controller;
 
-import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -19,6 +19,8 @@ public class UsuarioController {
     @FXML private TextField txtCorreo;
     @FXML private TextField txtTelefono;
     @FXML private TableView<Usuario> tblUsuarios;
+    @FXML private TextField txtBuscarUsuarios;
+    private ObservableList<Usuario> filasBusqueda;
     @FXML private TableColumn<Usuario, Long> colId;
     @FXML private TableColumn<Usuario, String> colNombre;
     @FXML private TableColumn<Usuario, String> colCorreo;
@@ -30,6 +32,7 @@ public class UsuarioController {
 
     @FXML
     public void initialize() {
+        filasBusqueda = BusquedaTabla.instalar(tblUsuarios, txtBuscarUsuarios, u -> BusquedaTabla.campos(u.getNombre(), u.getCorreo()));
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
@@ -43,7 +46,7 @@ public class UsuarioController {
     @FXML
     private void recargar() {
         try {
-            tblUsuarios.setItems(FXCollections.observableArrayList(usuarioDao.listar()));
+            filasBusqueda.setAll(usuarioDao.listar());
         } catch (Exception e) {
             Mensajes.error("No se pudieron cargar los usuarios.", e);
         }

@@ -80,6 +80,12 @@
 
     <!-- TABLA DE USUARIOS -->
 
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="Buscar:"/>
+        <TextField fx:id="txtBuscarUsuarios" accessibleText="Nombre, apellido o correo"
+                   promptText="Nombre, apellido o correo" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
     <TableView
             fx:id="tblUsuarios"
             VBox.vgrow="ALWAYS">

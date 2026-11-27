@@ -55,6 +55,12 @@
     <Label fx:id="lblAgua"
            styleClass="agua-info"/>
 
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="Buscar:"/>
+        <TextField fx:id="txtBuscarRiegos" accessibleText="Planta, fecha u origen del agua"
+                   promptText="Planta, fecha u origen del agua" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
     <TableView fx:id="tblRiegos"
                VBox.vgrow="ALWAYS">
 
@@ -79,7 +85,7 @@
 
     <Separator/>
 
-    <Label text="Alertas pendientes"
+    <Label text="Alertas"
            styleClass="section-title"/>
 
     <HBox spacing="8">
@@ -98,6 +104,13 @@
 
     </HBox>
 
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="Buscar:"/>
+        <TextField fx:id="txtBuscarAlertas" accessibleText="Buscar alertas"
+                   promptText="Planta, tipo o estado" HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="cbEstadoBusquedaAlerta" accessibleText="Estado de la alerta" prefWidth="130"/>
+    </HBox>
+
     <TableView fx:id="tblAlertas"
                VBox.vgrow="ALWAYS">
 
@@ -111,6 +124,7 @@
             <TableColumn fx:id="colATipo"
                          text="Tipo" prefWidth="110"/>
 
+            <TableColumn fx:id="colAEstado" text="Estado" prefWidth="104"/>
             <TableColumn fx:id="colAMensaje"
                          text="Mensaje" prefWidth="420"/>
         </columns>

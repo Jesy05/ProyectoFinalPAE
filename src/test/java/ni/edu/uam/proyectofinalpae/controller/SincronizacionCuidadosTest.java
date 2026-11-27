@@ -3,6 +3,8 @@ package ni.edu.uam.proyectofinalpae.controller;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.parser.PdfTextExtractor;
 import com.sun.net.httpserver.HttpServer;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -35,15 +37,19 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -295,6 +301,7 @@ class SincronizacionCuidadosTest {
             });
             esperarCalendario(calendario, p, ActividadCuidado.ATENCION, "Humedad actual: 90 %");
             esperarCalendario(calendario, p, ActividadCuidado.REGISTRADO, "250 ml");
+            comprobarBuscadoresJavaFx(pantallas.principal(), p);
             comprobarReportesJavaFx(pantallas.principal());
             enJavaFx(() -> {
                 calendario.close();
@@ -306,8 +313,233 @@ class SincronizacionCuidadosTest {
         }
     }
 
+    @Test
+    void exportaElReporteGeneralYLosOchoArchivosIndividuales(@TempDir Path carpeta) throws Exception {
+        Planta planta = crearPlanta(40, 20);
+        riegos.registrar(nuevoRiego(planta));
+        crearPlanta(45, 20);
+        var servicio = new ReporteService();
+        var secciones = servicio.prepararSecciones(ReporteService.TipoReporte.GENERAL, YearMonth.now());
+        assertEquals(4, secciones.size());
+        assertEquals(1, secciones.stream().map(d -> d.parametros().get("FECHA")).distinct().count());
+
+        var impresiones = servicio.generarSecciones(secciones, false);
+        Path pdf = carpeta.resolve("general.pdf");
+        servicio.exportarPdf(impresiones, pdf.toFile());
+        var lector = new PdfReader(pdf.toString());
+        try {
+            assertEquals(impresiones.stream().mapToInt(i -> i.getPages().size()).sum(), lector.getNumberOfPages());
+            assertEquals("Reporte general", lector.getInfo().get("Title"));
+        } finally {
+            lector.close();
+        }
+
+        Path xlsx = carpeta.resolve("general.xlsx");
+        servicio.exportarExcel(secciones, xlsx.toFile());
+        try (var archivo = new ZipFile(xlsx.toFile());
+             var datos = archivo.getInputStream(archivo.getEntry("xl/workbook.xml"))) {
+            String hojas = new String(datos.readAllBytes(), StandardCharsets.UTF_8);
+            for (String nombre : List.of("Plantas", "Riegos", "Alertas", "Calendario")) {
+                assertTrue(hojas.contains("name=\"" + nombre + "\""), hojas);
+            }
+        }
+
+        Path zip = carpeta.resolve("reportes.zip");
+        servicio.exportarTodos(YearMonth.now(), zip.toFile());
+        try (var archivo = new ZipFile(zip.toFile())) {
+            var esperados = Set.of("plantas.pdf", "plantas.xlsx", "riegos.pdf", "riegos.xlsx",
+                    "alertas.pdf", "alertas.xlsx", "calendario.pdf", "calendario.xlsx");
+            assertEquals(esperados, archivo.stream().map(e -> e.getName()).collect(java.util.stream.Collectors.toSet()));
+            for (String nombre : esperados) {
+                try (var datos = archivo.getInputStream(archivo.getEntry(nombre))) {
+                    if (nombre.endsWith(".pdf")) {
+                        var individual = new PdfReader(datos);
+                        try {
+                            assertTrue(individual.getNumberOfPages() > 0);
+                        } finally {
+                            individual.close();
+                        }
+                    } else {
+                        try (var libro = new ZipInputStream(datos)) {
+                            assertNotNull(libro.getNextEntry());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void reporteMensualCoincideConLaApiDelCalendarioYExportaMesesVacios(@TempDir Path carpeta) throws Exception {
+        YearMonth mes = YearMonth.of(2001, 5);
+        while (!json("/api/cuidados?mes=" + mes).isEmpty()) mes = mes.plusMonths(2);
+        Planta planta = crearPlanta(95, 20);
+        planta.setApodo("Albahaca de prueba");
+        plantas.actualizar(planta);
+        Riego riego = nuevoRiego(planta);
+        riego.setFechaHora(mes.atDay(15).atTime(9, 30));
+        riegos.registrar(riego);
+
+        var servicio = new ReporteService();
+        var tipo = ReporteService.TipoReporte.CALENDARIO;
+        var historico = servicio.prepararSecciones(tipo, mes).getFirst();
+        assertEquals(1, historico.filas().size());
+        assertEquals(ActividadCuidado.REGISTRADO, historico.filas().getFirst().get("estado"));
+
+        YearMonth actual = YearMonth.now();
+        var reporteActual = servicio.prepararSecciones(tipo, actual).getFirst();
+        var actividades = json("/api/cuidados?mes=" + actual);
+        assertEquals(actividades.size(), reporteActual.filas().size());
+        for (int i = 0; i < actividades.size(); i++) {
+            var esperado = actividades.get(i).getAsJsonObject();
+            var fila = reporteActual.filas().get(i);
+            assertEquals(esperado.get("fecha").getAsString(), fila.get("fecha").toString());
+            assertEquals(esperado.get("planta").getAsString(), fila.get("planta"));
+            assertEquals(esperado.get("tipo").getAsString(), fila.get("actividad"));
+            assertEquals(ActividadCuidado.nombreEstado(esperado.get("estado").getAsString()), fila.get("estado"));
+            assertEquals(esperado.get("descripcion").getAsString(), fila.get("detalle"));
+        }
+        assertTrue(reporteActual.filas().stream().anyMatch(fila -> planta.getNombreVisible().equals(fila.get("planta"))
+                && ActividadCuidado.ATENCION.equals(fila.get("estado"))));
+
+        for (YearMonth periodo : List.of(mes, mes.minusMonths(1))) {
+            var datos = servicio.prepararSecciones(tipo, periodo);
+            boolean conRiego = periodo.equals(mes);
+            assertEquals(conRiego ? 1 : 0, datos.getFirst().filas().size());
+            Path pdf = carpeta.resolve(periodo + ".pdf");
+            servicio.exportarPdf(servicio.generarSecciones(datos, false), pdf.toFile());
+            var lector = new PdfReader(pdf.toString());
+            try {
+                String texto = new PdfTextExtractor(lector).getTextFromPage(1);
+                assertTrue(texto.contains("Calendario de cuidados"));
+                assertTrue(texto.contains(periodo.toString()));
+                assertTrue(texto.contains(conRiego ? ActividadCuidado.REGISTRADO : "No hay actividades"));
+                if (conRiego) assertTrue(texto.contains(planta.getNombreVisible()));
+            } finally {
+                lector.close();
+            }
+            Path excel = carpeta.resolve(periodo + ".xlsx");
+            servicio.exportarExcel(datos, excel.toFile());
+            try (var archivo = new ZipFile(excel.toFile());
+                 var xml = archivo.getInputStream(archivo.getEntry("xl/sharedStrings.xml"))) {
+                String texto = new String(xml.readAllBytes(), StandardCharsets.UTF_8);
+                assertTrue(texto.contains(conRiego ? planta.getNombreVisible() : "No hay actividades"));
+                assertTrue(texto.contains(periodo.toString()));
+            }
+        }
+    }
+
+    @Test
+    void aplicaFiltrosAReportesIndividualesAlGeneralYAlZip(@TempDir Path carpeta) throws Exception {
+        var planta = crearPlanta(95, 22);
+        planta.setApodo("Filtro confirmado " + UUID.randomUUID().toString().substring(0, 6));
+        plantas.actualizar(planta);
+        var otraPlanta = crearPlanta(95, 25);
+        otraPlanta.setApodo("Fila excluida");
+        plantas.actualizar(otraPlanta);
+
+        LocalDate hoy = LocalDate.now();
+        for (LocalDate fecha : List.of(hoy.minusDays(1), hoy, hoy.plusDays(1))) {
+            Riego riego = nuevoRiego(planta);
+            riego.setFechaHora(fecha.atTime(23, 59));
+            riego.setCantidadMl(fecha.equals(hoy) ? 123 : 456);
+            riegos.registrar(riego);
+        }
+
+        var alerta = new Alerta(planta, "Filtro " + UUID.randomUUID().toString().substring(0, 8), "Mensaje histórico de filtro");
+        alertas.guardar(alerta);
+        alertas.marcarAtendida(alerta.getId());
+        alertas.guardar(new Alerta(planta, alerta.getTipo(), "Pendiente excluida"));
+        alertas.guardar(new Alerta(planta, "Filtro distinto", "Otro tipo excluido"));
+
+        var servicio = new ReporteService();
+        var filtros = new ReporteService.Filtros(planta.getCultivo().getId(), modulo.getColmena().getId(),
+                new ReporteService.Periodo(hoy, hoy), ReporteService.EstadoAlerta.ATENDIDAS,
+                alerta.getTipo(), YearMonth.now());
+        var general = servicio.prepararConFiltros(ReporteService.TipoReporte.GENERAL, filtros);
+        for (var seccion : general) {
+            assertEquals(seccion.filas(), servicio.prepararConFiltros(seccion.tipo(), filtros).getFirst().filas());
+        }
+        assertEquals(List.of(planta.getId()), general.get(0).filas().stream().map(f -> f.get("id")).toList());
+        assertEquals(List.of(123), general.get(1).filas().stream().filter(f -> planta.getNombreVisible().equals(f.get("planta"))).map(f -> f.get("ml")).toList());
+        assertEquals(1, general.get(2).filas().size());
+        assertEquals("Atendida", general.get(2).filas().getFirst().get("estado"));
+        assertEquals("Mensaje histórico de filtro", general.get(2).filas().getFirst().get("mensaje"));
+        assertEquals(YearMonth.now().toString(), general.get(3).parametros().get("MES"));
+        assertThrows(IllegalArgumentException.class, () -> new ReporteService.Periodo(hoy, hoy.minusDays(1)));
+
+        Path zip = carpeta.resolve("filtrados.zip");
+        servicio.exportarTodosConFiltros(filtros, zip.toFile());
+        try (var archivos = new ZipFile(zip.toFile())) {
+            for (String nombre : List.of("plantas.pdf", "riegos.pdf", "alertas.pdf")) {
+                try (var datos = archivos.getInputStream(archivos.getEntry(nombre))) {
+                    var lector = new PdfReader(datos);
+                    try {
+                        String texto = new PdfTextExtractor(lector).getTextFromPage(1);
+                        assertTrue(texto.contains("Filtro confirmado"), texto);
+                        assertFalse(texto.contains("Fila excluida"), texto);
+                        assertFalse(texto.contains("Pendiente excluida"), texto);
+                    } finally {
+                        lector.close();
+                    }
+                }
+            }
+        }
+    }
+
+    private void comprobarBuscadoresJavaFx(Stage ventana, Planta planta) throws Exception {
+        var atendida = new Alerta(planta, "Inspección rápida", "Estado consultable");
+        alertas.guardar(atendida);
+        alertas.marcarAtendida(atendida.getId());
+        enJavaFx(() -> {
+            var tabs = (TabPane) ventana.getScene().getRoot().lookup("#tabPrincipal");
+            tabs.getSelectionModel().select(0);
+            var usuarios = tabs.getTabs().get(0).getContent();
+            assertTrue(buscar(usuarios, "txtBuscarUsuarios", "tblUsuarios", "SINCRONIZACION").stream()
+                    .map(Usuario.class::cast).anyMatch(u -> u.getId().equals(modulo.getColmena().getUsuario().getId())));
+            assertEquals(1, buscar(usuarios, "txtBuscarUsuarios", "tblUsuarios", modulo.getColmena().getUsuario().getCorreo()).size());
+
+            tabs.getSelectionModel().select(1);
+            var colmenas = tabs.getTabs().get(1).getContent();
+            assertTrue(buscar(colmenas, "txtBuscarColmenas", "tblColmenas", "pruebas sincronizacion").stream()
+                    .map(Colmena.class::cast).anyMatch(c -> c.getId().equals(modulo.getColmena().getId())));
+
+            tabs.getSelectionModel().select(2);
+            var vistaPlantas = tabs.getTabs().get(2).getContent();
+            assertEquals(1, buscar(vistaPlantas, "txtBuscarPlantas", "tblPlantas",
+                    planta.getCultivo().getNombre() + " colmena").size());
+            assertTrue(buscar(vistaPlantas, "txtBuscarPlantas", "tblPlantas", "sin-coincidencias-1234").isEmpty());
+
+            tabs.getSelectionModel().select(3);
+            var riego = tabs.getTabs().get(3).getContent();
+            assertEquals(1, buscar(riego, "txtBuscarRiegos", "tblRiegos",
+                    planta.getNombreVisible() + " " + LocalDate.now() + " lluvia").size());
+            assertTrue(buscar(riego, "txtBuscarAlertas", "tblAlertas",
+                    planta.getNombreVisible() + " inspeccion atendida").isEmpty());
+            var selector = (javafx.scene.control.ComboBox<?>) riego.lookup("#cbEstadoBusquedaAlerta");
+            for (int indice = 0; indice < selector.getItems().size(); indice++) {
+                if (selector.getItems().get(indice).toString().equals("Atendidas")) {
+                    selector.getSelectionModel().select(indice);
+                    break;
+                }
+            }
+            var halladas = buscar(riego, "txtBuscarAlertas", "tblAlertas",
+                    planta.getNombreVisible() + " inspeccion atendida");
+            assertEquals(List.of(atendida.getId()), halladas.stream().map(Alerta.class::cast).map(Alerta::getId).toList());
+            return null;
+        });
+    }
+
+    private static List<?> buscar(javafx.scene.Node vista, String idCampo, String idTabla, String consulta) {
+        var campo = (javafx.scene.control.TextField) vista.lookup("#" + idCampo);
+        var tabla = (TableView<?>) vista.lookup("#" + idTabla);
+        campo.setText(consulta);
+        return List.copyOf(tabla.getItems());
+    }
+
     private static void comprobarReportesJavaFx(Stage ventana) throws Exception {
-        for (var tipo : List.of(ReporteService.TipoReporte.PLANTAS, ReporteService.TipoReporte.RIEGOS)) {
+        for (var tipo : List.of(ReporteService.TipoReporte.PLANTAS, ReporteService.TipoReporte.RIEGOS,
+                ReporteService.TipoReporte.CALENDARIO, ReporteService.TipoReporte.GENERAL)) {
             var generar = enJavaFx(() -> {
                 var raiz = ventana.getScene().getRoot();
                 var tabs = (TabPane) raiz.lookup("#tabPrincipal");
@@ -316,6 +548,12 @@ class SincronizacionCuidadosTest {
                 @SuppressWarnings("unchecked")
                 var selector = (javafx.scene.control.ComboBox<ReporteService.TipoReporte>) contenido.lookup("#cbReporte");
                 selector.setValue(tipo);
+                if (tipo == ReporteService.TipoReporte.CALENDARIO) {
+                    var panel = (javafx.scene.control.TitledPane) contenido.lookup("#panelFiltros");
+                    panel.setExpanded(true);
+                    var anio = (javafx.scene.control.TextField) panel.getContent().lookup("#txtAnioCalendario");
+                    anio.setText("2000");
+                }
                 var boton = (Button) contenido.lookup("#btnGenerar");
                 boton.fire();
                 return boton;
@@ -328,6 +566,7 @@ class SincronizacionCuidadosTest {
                 var excel = (Button) raiz.lookup("#btnExcel");
                 assertFalse(pdf.isDisabled(), tipo.toString());
                 assertFalse(excel.isDisabled(), tipo.toString());
+                assertFalse(raiz.lookup("#btnExportarTodos").isDisabled());
                 CambiosCuidados.notificar();
                 assertTrue(pdf.isDisabled());
                 assertTrue(excel.isDisabled());

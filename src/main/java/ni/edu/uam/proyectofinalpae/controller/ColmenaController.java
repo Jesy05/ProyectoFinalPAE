@@ -2,6 +2,7 @@ package ni.edu.uam.proyectofinalpae.controller;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,6 +24,8 @@ public class ColmenaController {
     @FXML private Spinner<Integer> spCapacidad;
     @FXML private ComboBox<Usuario> cbFiltroUsuario;
     @FXML private TableView<Colmena> tblColmenas;
+    @FXML private TextField txtBuscarColmenas;
+    private ObservableList<Colmena> filasBusqueda;
     @FXML private TableColumn<Colmena, Long> colId;
     @FXML private TableColumn<Colmena, String> colNombre;
     @FXML private TableColumn<Colmena, String> colUbicacion;
@@ -36,6 +39,8 @@ public class ColmenaController {
 
     @FXML
     public void initialize() {
+        filasBusqueda = BusquedaTabla.instalar(tblColmenas, txtBuscarColmenas, c -> BusquedaTabla.campos(
+                c.getNombre(), c.getUbicacion(), c.getUsuario().getNombre()));
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colUbicacion.setCellValueFactory(new PropertyValueFactory<>("ubicacion"));
@@ -56,7 +61,7 @@ public class ColmenaController {
             cbUsuario.setItems(usuarios);
             cbFiltroUsuario.setItems(usuarios);
             cbFiltroUsuario.setValue(null);
-            tblColmenas.setItems(FXCollections.observableArrayList(colmenaDao.listar()));
+            filasBusqueda.setAll(colmenaDao.listar());
         } catch (Exception e) {
             Mensajes.error("No se pudieron cargar las colmenas.", e);
         }
@@ -68,7 +73,7 @@ public class ColmenaController {
         Usuario usuario = cbFiltroUsuario.getValue();
         if (usuario == null) return;
         try {
-            tblColmenas.setItems(FXCollections.observableArrayList(colmenaDao.buscarPorUsuario(usuario.getId())));
+            filasBusqueda.setAll(colmenaDao.buscarPorUsuario(usuario.getId()));
         } catch (Exception e) {
             Mensajes.error("No se pudo filtrar.", e);
         }
