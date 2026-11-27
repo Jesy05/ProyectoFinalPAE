@@ -26,6 +26,7 @@ public final class Iconos {
             Map.entry("Plantas", "mdi2s-sprout"),
             Map.entry("Riegos y alertas", "mdi2w-water"),
             Map.entry("Reportes", "mdi2f-file-chart"),
+            Map.entry("Monitoreo", "mdi2m-monitor-dashboard"),
             Map.entry("Inicio", "mdi2h-home"),
             // Botones CRUD
             Map.entry("Nuevo", "mdi2p-plus"),
@@ -46,7 +47,11 @@ public final class Iconos {
             // Reportes
             Map.entry("Generar reporte", "mdi2f-file-eye"),
             Map.entry("Exportar PDF", "mdi2f-file-pdf-box"),
-            Map.entry("Exportar Excel", "mdi2m-microsoft-excel")
+            Map.entry("Exportar Excel", "mdi2m-microsoft-excel"),
+            // Monitoreo
+            Map.entry("Leer sensores", "mdi2a-access-point"),
+            Map.entry("Simular paso del tiempo", "mdi2t-timer-sand"),
+            Map.entry("Llenar con lluvia", "mdi2w-weather-pouring")
     );
 
     private Iconos() {

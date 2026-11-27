@@ -13,7 +13,8 @@
       styleClass="bienvenida">
 
     <!-- Columna izquierda: mensaje y acciones -->
-    <VBox styleClass="bienvenida-info" HBox.hgrow="ALWAYS" spacing="18">
+    <StackPane HBox.hgrow="ALWAYS">
+    <VBox fx:id="info" styleClass="bienvenida-info" spacing="18">
 
         <LogoPlantBee alto="110" conTexto="true" color="#004F2E"/>
 
@@ -67,13 +68,16 @@
             </Button>
         </HBox>
     </VBox>
+        <!-- Abejitas animadas: vuelan por los espacios libres y no bloquean los clics -->
+        <Pane fx:id="capaAbejas" mouseTransparent="true"/>
+    </StackPane>
 
     <!-- Columna derecha: simbolo grande de la colmena -->
     <StackPane styleClass="bienvenida-arte" minWidth="380" prefWidth="440">
         <HBox alignment="CENTER" spacing="26">
-            <LogoPlantBee alto="250" conTexto="false" color="#F5EAB9"/>
+            <LogoPlantBee fx:id="logoArte" alto="250" conTexto="false" color="#F5EAB9"/>
             <!-- Ilustracion del prototipo: torre de modulos hexagonales con ruedas -->
-            <ImageView fitHeight="400" preserveRatio="true" smooth="true" styleClass="bienvenida-huerto">
+            <ImageView fx:id="huerto" fitHeight="400" preserveRatio="true" smooth="true" styleClass="bienvenida-huerto">
                 <image>
                     <Image url="@../img/huerto-plantbee.png"/>
                 </image>

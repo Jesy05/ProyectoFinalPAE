@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import ni.edu.uam.proyectofinalpae.util.Animaciones;
 import ni.edu.uam.proyectofinalpae.util.Iconos;
 import ni.edu.uam.proyectofinalpae.util.Navegador;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -86,6 +87,11 @@ public class OnboardingController {
         lblPaso.setText("Paso " + (paso + 1) + " de " + PASOS.length);
         lblTitulo.setText(datos[1]);
         lblTexto.setText(datos[2]);
+
+        // Cada paso: el icono aparece con un rebote y el texto entra deslizandose
+        Animaciones.rebote(contenedorIcono);
+        Animaciones.entrada(lblTitulo, 80);
+        Animaciones.entrada(lblTexto, 160);
 
         for (int i = 0; i < puntos.getChildren().size(); i++) {
             puntos.getChildren().get(i).getStyleClass().remove("activo");

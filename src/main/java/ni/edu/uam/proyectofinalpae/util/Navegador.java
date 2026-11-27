@@ -35,6 +35,7 @@ public final class Navegador {
         }
         Parent raiz = FXMLLoader.load(recurso);
         Iconos.decorar(raiz);
+        Animaciones.decorarBotones(raiz);
         return raiz;
     }
 
@@ -57,6 +58,9 @@ public final class Navegador {
                     if (tab.getContent() != null && !(tab.getContent() instanceof ScrollPane)) {
                         // Se guarda la pantalla original para poder buscar su boton Recargar
                         tab.setUserData(tab.getContent());
+                        if (tab.getContent() instanceof Parent pantalla) {
+                            Animaciones.decorarBotones(pantalla);
+                        }
                         ScrollPane scroll = new ScrollPane(tab.getContent());
                         scroll.setFitToWidth(true);
                         scroll.setFitToHeight(true);
@@ -67,12 +71,24 @@ public final class Navegador {
                 // Cada pestana se actualiza al abrirla: asi una usuaria registrada en Usuarios
                 // aparece de inmediato en el combo de Dueno de Colmenas
                 pestanas.getSelectionModel().selectedItemProperty()
-                        .addListener((obs, anterior, actual) -> recargar(actual));
+                        .addListener((obs, anterior, actual) -> {
+                            recargar(actual);
+                            animarPestana(actual);
+                        });
+                animarPestana(pestanas.getSelectionModel().getSelectedItem());
             }
             Node inicio = panel.lookup("#btnInicio");
             if (inicio instanceof Button boton) {
                 boton.setOnAction(e -> irBienvenida());
             }
+        }
+    }
+
+    /** Al abrir una pestana, sus secciones aparecen una tras otra (efecto cascada). */
+    private static void animarPestana(Tab tab) {
+        if (tab != null && tab.getUserData() instanceof Parent pantalla) {
+            var secciones = pantalla.getChildrenUnmodifiable().stream().limit(6).toList();
+            Animaciones.escalonar(secciones, 0, 55);
         }
     }
 
@@ -92,6 +108,7 @@ public final class Navegador {
         try {
             Parent raiz = cargar(vista);
             escena.setRoot(raiz);
+            Animaciones.fundido(raiz);
             return raiz;
         } catch (Exception e) {
             Mensajes.error("No se pudo abrir la pantalla " + vista, e);
