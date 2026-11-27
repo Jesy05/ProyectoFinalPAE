@@ -2,6 +2,7 @@ package ni.edu.uam.proyectofinalpae.controller;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -28,12 +29,18 @@ public class RiegoController {
     @FXML private ComboBox<String> cbModo;
     @FXML private Label lblAgua;
     @FXML private TableView<Riego> tblRiegos;
+    @FXML private TextField txtBuscarRiegos;
+    private ObservableList<Riego> filasRiegos;
     @FXML private TableColumn<Riego, String> colFecha;
     @FXML private TableColumn<Riego, String> colPlanta;
     @FXML private TableColumn<Riego, Integer> colCantidad;
     @FXML private TableColumn<Riego, String> colOrigen;
     @FXML private TableColumn<Riego, String> colModo;
     @FXML private TableView<Alerta> tblAlertas;
+    @FXML private TextField txtBuscarAlertas;
+    @FXML private ComboBox<EstadoAlerta> cbEstadoBusquedaAlerta;
+    @FXML private TableColumn<Alerta, String> colAEstado;
+    private ObservableList<Alerta> filasAlertas;
     @FXML private TableColumn<Alerta, String> colAFecha;
     @FXML private TableColumn<Alerta, String> colAPlanta;
     @FXML private TableColumn<Alerta, String> colATipo;
@@ -46,6 +53,20 @@ public class RiegoController {
 
     @FXML
     public void initialize() {
+        filasRiegos = BusquedaTabla.instalar(tblRiegos, txtBuscarRiegos, r -> BusquedaTabla.campos(
+                r.getPlanta().getNombreVisible(), r.getFechaHora().format(FORMATO),
+                r.getFechaHora().toLocalDate().toString(), r.getOrigenAgua()));
+        filasAlertas = BusquedaTabla.instalar(tblAlertas, txtBuscarAlertas, a -> BusquedaTabla.campos(
+                a.getPlanta().getNombreVisible(), a.getTipo(), textoEstado(a)));
+        cbEstadoBusquedaAlerta.setItems(FXCollections.observableArrayList(EstadoAlerta.values()));
+        cbEstadoBusquedaAlerta.setValue(EstadoAlerta.PENDIENTES);
+        cbEstadoBusquedaAlerta.setOnAction(evento -> {
+            try {
+                recargarAlertas();
+            } catch (RuntimeException e) {
+                Mensajes.error("No se pudieron consultar las alertas.", e);
+            }
+        });
         cbOrigen.setItems(FXCollections.observableArrayList(
                 "Agua de lluvia", "Agua gris filtrada (biofiltro)", "Agua potable"));
         cbModo.setItems(FXCollections.observableArrayList("Automatico", "Manual"));
@@ -57,7 +78,9 @@ public class RiegoController {
         colAFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFechaHora().format(FORMATO)));
         colAPlanta.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPlanta().toString()));
         colATipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        colAMensaje.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMensajeVigente()));
+        colAMensaje.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().isAtendida()
+                ? d.getValue().getMensaje() : d.getValue().getMensajeVigente()));
+        colAEstado.setCellValueFactory(d -> new SimpleStringProperty(textoEstado(d.getValue())));
         limpiar();
         CambiosCuidados.observar(tblAlertas, this::recargar);
     }
@@ -79,7 +102,7 @@ public class RiegoController {
                 cbPlanta.getItems().stream().filter(p -> p.getId().equals(seleccionada.getId()))
                         .findFirst().ifPresent(cbPlanta::setValue);
             }
-            tblRiegos.setItems(FXCollections.observableArrayList(riegoDao.listar()));
+            filasRiegos.setAll(riegoDao.listar());
             recargarAlertas();
             actualizarResumenAgua();
         } catch (Exception e) {
@@ -88,7 +111,29 @@ public class RiegoController {
     }
 
     private void recargarAlertas() {
-        tblAlertas.setItems(FXCollections.observableArrayList(alertaDao.listarPendientes()));
+        EstadoAlerta estado = cbEstadoBusquedaAlerta.getValue();
+        filasAlertas.setAll(alertaDao.listarFiltradas(estado.atendida, null, null, null));
+    }
+
+    private static String textoEstado(Alerta alerta) {
+        return alerta.isAtendida() ? "Atendida" : "Pendiente";
+    }
+
+    private enum EstadoAlerta {
+        PENDIENTES("Pendientes", false), ATENDIDAS("Atendidas", true), TODAS("Todas", null);
+
+        private final String etiqueta;
+        private final Boolean atendida;
+
+        EstadoAlerta(String etiqueta, Boolean atendida) {
+            this.etiqueta = etiqueta;
+            this.atendida = atendida;
+        }
+
+        @Override
+        public String toString() {
+            return etiqueta;
+        }
     }
 
     @FXML

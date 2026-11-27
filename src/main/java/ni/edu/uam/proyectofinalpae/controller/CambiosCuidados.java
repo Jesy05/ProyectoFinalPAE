@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 /** Avisa a las ventanas abiertas después de un cambio guardado desde JavaFX. */
-final class CambiosCuidados {
+public final class CambiosCuidados {
     private static final ReadOnlyLongWrapper VERSION = new ReadOnlyLongWrapper();
 
     private CambiosCuidados() {
@@ -62,7 +62,7 @@ final class CambiosCuidados {
         hilo.start();
     }
 
-    static void notificar() {
+    public static void notificar() {
         VERSION.set(VERSION.get() + 1);
     }
 }

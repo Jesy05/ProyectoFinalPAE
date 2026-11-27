@@ -141,6 +141,12 @@
 
     </HBox>
 
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="Buscar:"/>
+        <TextField fx:id="txtBuscarPlantas" accessibleText="Planta, cultivo o colmena"
+                   promptText="Planta, cultivo o colmena" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
     <TableView fx:id="tblPlantas"
                VBox.vgrow="ALWAYS">
 

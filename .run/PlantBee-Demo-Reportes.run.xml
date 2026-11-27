@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PlantBee Demo Reportes" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ni.edu.uam.proyectofinalpae.Launcher" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <module name="ProyectoFinalPAE" />
+    <envs>
+      <env name="PLANTBEE_DB_CONFIG" value="$PROJECT_DIR$/database/demo-reportes.properties" />
+      <env name="PLANTBEE_DB_URL" value="jdbc:postgresql://127.0.0.1:55432/plantbee_demo_reportes" />
+      <env name="PLANTBEE_DB_USER" value="plantbee_test" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

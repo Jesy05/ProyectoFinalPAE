@@ -45,6 +45,8 @@
 		</conditionalStyle>
 	</style>
 	<parameter name="FECHA" class="java.lang.String"/>
+	<parameter name="ALCANCE" class="java.lang.String"/>
+	<parameter name="TOTAL_REGISTROS" class="java.lang.Integer"/>
 	<parameter name="LOGO" class="java.io.InputStream"/>
 	<field name="id" class="java.lang.Long"/>
 	<field name="planta" class="java.lang.String"/>
@@ -59,7 +61,7 @@
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<title>
-		<band height="66">
+		<band height="84">
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
 				<reportElement x="0" y="4" width="40" height="50"/>
 				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
@@ -69,14 +71,19 @@
 				<textElement>
 					<paragraph leftIndent="8"/>
 				</textElement>
-				<text><![CDATA[Inventario de plantas y sensores]]></text>
+				<text><![CDATA[Inventario actual de plantas y sensores]]></text>
 			</staticText>
 			<textField>
 				<reportElement style="subtitulo" x="40" y="34" width="742" height="18"/>
 				<textElement>
 					<paragraph leftIndent="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["PlantBee · Huertos verticales modulares · Generado el " + $P{FECHA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PlantBee · Generado el " + $P{FECHA} + " · Registros: " + $P{TOTAL_REGISTROS}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="subtitulo" x="40" y="53" width="742" height="20"/>
+				<textElement><paragraph leftIndent="8"/></textElement>
+				<textFieldExpression><![CDATA[$P{ALCANCE}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

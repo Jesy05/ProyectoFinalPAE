@@ -310,7 +310,7 @@ final class CalendarioCuidadosVentana {
                     .map(ActividadCuidado::estado).distinct().toList();
             String texto = fecha.format(DIA) + (fecha.equals(hoy) ? " · Hoy" : "")
                     + (estados.isEmpty() ? "" : " · " + estados.stream()
-                    .map(CalendarioCuidadosVentana::nombreEstado).collect(Collectors.joining(", ")));
+                    .map(ActividadCuidado::nombreEstado).collect(Collectors.joining(", ")));
             Button boton = boton(Integer.toString(dia), texto, () -> {
                 seleccion = fecha;
                 dibujar();
@@ -402,10 +402,6 @@ final class CalendarioCuidadosVentana {
         etiqueta.setAccessibleText(nombreEstado(estado));
         etiqueta.getStyleClass().addAll("calendario-etiqueta", clase(estado));
         return etiqueta;
-    }
-
-    private static String nombreEstado(String estado) {
-        return REVISION.equals(estado) ? "Revisión estimada" : estado;
     }
 
     private static String simboloEstado(String estado) {
