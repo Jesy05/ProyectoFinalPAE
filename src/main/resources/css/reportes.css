@@ -84,7 +84,7 @@
 .reporte-vista {
     -fx-border-color: #D7E3A4;
     -fx-border-radius: 14;
-    -fx-min-height: 280;
+    -fx-min-height: 120;
 }
 
 /* Cada pagina se ve como una hoja de papel */
@@ -97,4 +97,81 @@
     -fx-text-fill: #657733;
     -fx-font-size: 14px;
     -fx-padding: 60 0;
+}
+
+/* Panel de filtros y encabezado de Modena. */
+.reportes-page .reporte-filtros > .title {
+    -fx-background-color: #004F2E;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10 10 0 0;
+    -fx-padding: 10 14;
+}
+
+.reportes-page .reporte-filtros > .title > .text {
+    -fx-fill: #F7F8EC;
+    -fx-font-weight: bold;
+}
+
+.reportes-page .reporte-filtros > .title > .arrow-button > .arrow {
+    -fx-background-color: #EAD465;
+}
+
+.reportes-page .reporte-filtros > .content,
+.reportes-page .reporte-filtros-scroll,
+.reportes-page .reporte-filtros-scroll > .viewport {
+    -fx-background-color: #F7F8EC;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+}
+
+.reportes-page .reporte-filtros > .content {
+    -fx-padding: 7 8;
+}
+
+.reportes-page .reporte-filtro-lista {
+    -fx-padding: 1 1 3 1;
+}
+
+.reportes-page .reporte-filtro-grupo {
+    -fx-background-color: #EAF2DF;
+    -fx-background-radius: 8;
+    -fx-padding: 7 10;
+}
+
+.reportes-page .filtro-titulo {
+    -fx-text-fill: #004F2E;
+    -fx-font-weight: bold;
+}
+
+.reportes-page .reporte-filtros .combo-box,
+.reportes-page .reporte-filtros .text-field {
+    -fx-background-color: #F7F8EC;
+    -fx-border-color: #B4CD75;
+    -fx-text-fill: #254900;
+}
+
+.reportes-page .reporte-filtros .combo-box .list-cell {
+    -fx-text-fill: #254900;
+}
+
+.reportes-page .reporte-filtros .date-picker > .arrow-button {
+    -fx-background-color: #B4CD75;
+}
+
+.reportes-page .btn-restablecer {
+    -fx-background-color: #B4CD75;
+    -fx-text-fill: #254900;
+}
+
+.reportes-page .btn-restablecer:hover {
+    -fx-background-color: #006451;
+    -fx-text-fill: #F7F8EC;
+}
+
+.reportes-page .reporte-filtros-scroll .scroll-bar {
+    -fx-background-color: #F7F8EC;
+}
+
+.reportes-page .reporte-filtros-scroll .scroll-bar .thumb {
+    -fx-background-color: #B4CD75;
 }

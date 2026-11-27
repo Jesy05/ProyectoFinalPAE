@@ -9,4 +9,8 @@ public record ActividadCuidado(
     public static final String REVISION = "Revisar humedad";
     public static final String REGISTRADO = "Riego registrado";
     public static final String INSUFICIENTE = "Información insuficiente";
+
+    public static String nombreEstado(String estado) {
+        return REVISION.equals(estado) ? "Revisión estimada" : estado;
+    }
 }

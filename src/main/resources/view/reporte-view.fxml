@@ -7,7 +7,7 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="ni.edu.uam.proyectofinalpae.controller.ReporteController"
-      styleClass="reportes-page"
+      fx:id="paginaReportes" styleClass="reportes-page"
       spacing="12">
 
     <Label text="Reportes" styleClass="page-title"/>
@@ -16,7 +16,7 @@
 
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Label text="Reporte:" styleClass="field-label"/>
-        <ComboBox fx:id="cbReporte" prefWidth="280"/>
+        <ComboBox fx:id="cbReporte" prefWidth="315"/>
         <Button fx:id="btnGenerar"
                 text="Generar reporte"
                 styleClass="btn-guardar"
@@ -33,6 +33,60 @@
                 text="Exportar Excel"
                 styleClass="btn-excel"
                 onAction="#exportarExcel"/>
+    </HBox>
+
+    <TitledPane fx:id="panelFiltros" text="Filtros de reportes" styleClass="reporte-filtros"
+                expanded="false" animated="false">
+        <VBox spacing="7">
+            <ScrollPane fx:id="scrollFiltros" fitToWidth="true" hbarPolicy="NEVER" styleClass="reporte-filtros-scroll">
+                <FlowPane hgap="8" vgap="8" prefWrapLength="880" styleClass="reporte-filtro-lista">
+                    <VBox fx:id="grupoInventario" spacing="5" prefWidth="414" styleClass="reporte-filtro-grupo">
+                        <Label text="Inventario actual" styleClass="filtro-titulo"/>
+                        <FlowPane hgap="8" vgap="6" alignment="CENTER_LEFT">
+                            <ComboBox fx:id="cbCultivo" accessibleText="Cultivo" prefWidth="185"/>
+                            <ComboBox fx:id="cbColmena" accessibleText="Colmena" prefWidth="185"/>
+                        </FlowPane>
+                    </VBox>
+                    <VBox fx:id="grupoHistorico" spacing="5" prefWidth="414" styleClass="reporte-filtro-grupo">
+                        <Label fx:id="lblPeriodoHistorico" text="Período histórico" styleClass="filtro-titulo"/>
+                        <FlowPane hgap="8" vgap="6" alignment="CENTER_LEFT">
+                            <ComboBox fx:id="cbPeriodo" accessibleText="Período histórico" prefWidth="215"/>
+                            <FlowPane fx:id="filaRango" hgap="8" vgap="6" alignment="CENTER_LEFT">
+                                <Label text="Desde" styleClass="field-label"/>
+                                <DatePicker fx:id="dpDesde" accessibleText="Fecha inicial" prefWidth="145"/>
+                                <Label text="Hasta" styleClass="field-label"/>
+                                <DatePicker fx:id="dpHasta" accessibleText="Fecha final inclusiva" prefWidth="145"/>
+                            </FlowPane>
+                        </FlowPane>
+                    </VBox>
+                    <VBox fx:id="grupoMes" spacing="5" prefWidth="414" styleClass="reporte-filtro-grupo">
+                        <Label fx:id="lblMes" text="Mes y año" styleClass="filtro-titulo"/>
+                        <FlowPane hgap="8" vgap="6" alignment="CENTER_LEFT">
+                            <ComboBox fx:id="cbMesCalendario" accessibleText="Mes" prefWidth="150"/>
+                            <TextField fx:id="txtAnioCalendario" accessibleText="Año" prefColumnCount="5" maxWidth="90"/>
+                        </FlowPane>
+                    </VBox>
+                    <VBox fx:id="grupoAlertas" spacing="5" prefWidth="414" styleClass="reporte-filtro-grupo">
+                        <Label text="Estado y tipo de alerta" styleClass="filtro-titulo"/>
+                        <FlowPane hgap="8" vgap="6" alignment="CENTER_LEFT">
+                            <ComboBox fx:id="cbEstadoAlerta" accessibleText="Estado de alerta" prefWidth="150"/>
+                            <ComboBox fx:id="cbTipoAlerta" accessibleText="Tipo de alerta" prefWidth="225"/>
+                        </FlowPane>
+                    </VBox>
+                </FlowPane>
+            </ScrollPane>
+            <Label fx:id="lblCatalogos" styleClass="reporte-estado" wrapText="true"/>
+            <Button text="Restablecer filtros" styleClass="btn-restablecer" onAction="#restablecerFiltros"/>
+        </VBox>
+    </TitledPane>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="btnExportarTodos"
+                text="Exportar todos (ZIP)"
+                styleClass="btn-pdf"
+                onAction="#exportarTodos"/>
+        <Label text="Para ajustar los filtros de todo el ZIP, selecciona Reporte general."
+               styleClass="page-subtitle" wrapText="true"/>
     </HBox>
 
     <Label fx:id="lblEstado" styleClass="reporte-estado"/>

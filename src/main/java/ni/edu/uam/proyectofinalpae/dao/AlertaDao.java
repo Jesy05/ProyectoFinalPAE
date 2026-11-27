@@ -5,6 +5,7 @@ import ni.edu.uam.proyectofinalpae.model.Planta;
 
 import org.hibernate.Session;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -14,17 +15,34 @@ public class AlertaDao extends GenericDao<Alerta> {
         super(Alerta.class);
     }
 
-    /** HQL sobre entidades relacionadas: alertas sin atender con su planta y ubicacion. */
     public List<Alerta> listarPendientes() {
-        return enSesion(s -> s.createQuery(
-                        "SELECT a FROM Alerta a "
-                                + "JOIN FETCH a.planta p "
-                                + "JOIN FETCH p.cultivo "
-                                + "LEFT JOIN FETCH p.sensor "
-                                + "JOIN FETCH p.modulo m "
-                                + "JOIN FETCH m.colmena "
-                                + "WHERE a.atendida = false "
-                                + "ORDER BY a.fechaHora DESC", Alerta.class)
+        return listarFiltradas(false, null, null, null);
+    }
+
+    public List<Alerta> listarFiltradas(Boolean atendida, String tipo, LocalDateTime inicio, LocalDateTime fin) {
+        return enSesion(s -> {
+            String hql = """
+                    SELECT a FROM Alerta a
+                    JOIN FETCH a.planta p
+                    JOIN FETCH p.cultivo
+                    LEFT JOIN FETCH p.sensor
+                    JOIN FETCH p.modulo m
+                    JOIN FETCH m.colmena
+                    WHERE 1 = 1
+                    """;
+            if (atendida != null) hql += " AND a.atendida = :atendida";
+            if (tipo != null) hql += " AND a.tipo = :tipo";
+            if (inicio != null) hql += " AND a.fechaHora >= :inicio AND a.fechaHora < :fin";
+            var consulta = s.createQuery(hql + " ORDER BY a.fechaHora DESC, a.id DESC", Alerta.class);
+            if (atendida != null) consulta.setParameter("atendida", atendida);
+            if (tipo != null) consulta.setParameter("tipo", tipo);
+            if (inicio != null) consulta.setParameter("inicio", inicio).setParameter("fin", fin);
+            return consulta.getResultList();
+        });
+    }
+
+    public List<String> listarTipos() {
+        return enSesion(s -> s.createQuery("SELECT DISTINCT a.tipo FROM Alerta a ORDER BY a.tipo", String.class)
                 .getResultList());
     }
 

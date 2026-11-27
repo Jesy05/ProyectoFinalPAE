@@ -39,6 +39,8 @@
 	</style>
 	<style name="pie" fontName="SansSerif" fontSize="8" forecolor="#657733" vTextAlign="Middle"/>
 	<parameter name="FECHA" class="java.lang.String"/>
+	<parameter name="ALCANCE" class="java.lang.String"/>
+	<parameter name="TOTAL_REGISTROS" class="java.lang.Integer"/>
 	<parameter name="LOGO" class="java.io.InputStream"/>
 	<parameter name="RESUMEN_AGUA" class="java.lang.String"/>
 	<field name="fecha" class="java.util.Date"/>
@@ -52,7 +54,7 @@
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<title>
-		<band height="66">
+		<band height="84">
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
 				<reportElement x="0" y="4" width="40" height="50"/>
 				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
@@ -69,7 +71,12 @@
 				<textElement>
 					<paragraph leftIndent="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["PlantBee · Huertos verticales modulares · Generado el " + $P{FECHA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PlantBee · Generado el " + $P{FECHA} + " · Registros: " + $P{TOTAL_REGISTROS}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="subtitulo" x="40" y="53" width="742" height="20"/>
+				<textElement><paragraph leftIndent="8"/></textElement>
+				<textFieldExpression><![CDATA[$P{ALCANCE}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
