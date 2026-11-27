@@ -13,7 +13,8 @@
       styleClass="bienvenida">
 
     <!-- Columna izquierda: mensaje y acciones -->
-    <VBox fx:id="info" styleClass="bienvenida-info" HBox.hgrow="ALWAYS" spacing="18">
+    <StackPane HBox.hgrow="ALWAYS">
+    <VBox fx:id="info" styleClass="bienvenida-info" spacing="18">
 
         <LogoPlantBee alto="110" conTexto="true" color="#004F2E"/>
 
@@ -67,6 +68,9 @@
             </Button>
         </HBox>
     </VBox>
+        <!-- Abejitas animadas: vuelan por los espacios libres y no bloquean los clics -->
+        <Pane fx:id="capaAbejas" mouseTransparent="true"/>
+    </StackPane>
 
     <!-- Columna derecha: simbolo grande de la colmena -->
     <StackPane styleClass="bienvenida-arte" minWidth="380" prefWidth="440">
